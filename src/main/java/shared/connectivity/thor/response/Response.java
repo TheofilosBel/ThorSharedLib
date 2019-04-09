@@ -1,10 +1,15 @@
 package shared.connectivity.thor.response;
 
 import java.util.List;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
-// Represents the response of a system to a query.
+/** 
+ * Represents the response of a system to a query.
+ */
 public class Response<R extends ResultInterface> {
     
     private String id;                                      // The id of the current system (the name in lowercase ans without spaces).
@@ -18,19 +23,30 @@ public class Response<R extends ResultInterface> {
     /**
      * Constructor without {@link ComponentStatistics}.
      */
-    public Response(String id, String name, Architecture architecture, List<ComponentTime> componentsTime,
-            double totalTime, List<R> topResults) {
+    public Response(
+      String id, String name, Architecture architecture,
+      List<ComponentTime> componentsTime, List<R> topResults
+    ) {
         this.id = id;
         this.name = name;
         this.architecture = architecture;
         this.componentsTime = componentsTime;
         this.componentStatistics = null;
-        this.totalTime = totalTime;
 
         // // Update the percentage property of the componentsTime list.
         // for (ComponentTime componentTime : this.componentsTime) {
         //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
         // }
+
+        // Compute the total time spent in the components.
+       this.totalTime = 0.0;
+        for (ComponentTime pair : componentsTime) {
+            this.totalTime += pair.getTime();
+        }
+
+        // Format the total time (round to 2 decimal points).
+        DecimalFormat df = new DecimalFormat("#0.##");
+        this.totalTime = Double.valueOf(df.format(this.totalTime));
 
         // Create a Result object for every tuple.
         this.results = new ArrayList<Result<R>>();
@@ -43,27 +59,50 @@ public class Response<R extends ResultInterface> {
      * Constructor with {@link ComponentStatistics}.
      */
     public Response(
-      String id, String name, Architecture architecture,
+      String id, String name, Architecture architecture, 
       List<ComponentTime> componentsTime, List<ComponentStatistics> componentStatistics,
-      double totalTime, List<R> topResults
+      List<R> topResults
     ) {
         this.id = id;
         this.name = name;
         this.architecture = architecture;
         this.componentsTime = componentsTime;
         this.componentStatistics = componentStatistics;
-        this.totalTime = totalTime;
 
         // // Update the percentage property of the componentsTime list.
         // for (ComponentTime componentTime : this.componentsTime) {
         //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
         // }
 
+        // Compute the total time spent in the components.
+       this.totalTime = 0.0;
+       for (ComponentTime pair : componentsTime) {
+           this.totalTime += pair.getTime();
+       }
+
+       // Format the total time (round to 2 decimal points).
+       DecimalFormat df = new DecimalFormat("#0.##");
+       this.totalTime = Double.valueOf(df.format(this.totalTime));
+
         // Create a Result object for every tuple.
         this.results = new ArrayList<Result<R>>();
         for (R systemResult : topResults) {
             this.results.add(new Result<>(systemResult));
         }
+    }
+
+
+    /**
+     * Converts this response to JSON. Then output it between 
+     * two lines that contain the keyword: <json>. THOR will read the 
+     * response and render it.
+     */
+    public void sendToTHOR() {
+        Gson gson = new Gson();   // Create a JSON 
+        String json = gson.toJson(this);
+        System.out.println("<json>");
+        System.out.println(json);
+        System.out.println("<json>");
     }
 
 
@@ -91,7 +130,5 @@ public class Response<R extends ResultInterface> {
     public List<Result<R>> getResults() {
         return this.results;
     }
-
-    
 
 }

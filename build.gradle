@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    
-    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'          // For the Basic DataSource interface
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'   // For the Basic DataSource interface
+    implementation 'com.google.code.gson:gson:2.8.5'                      // Google Gson    
 }
 
 // Modify the jar task
@@ -32,13 +32,6 @@ jar {
                    'Implementation-Version': project.version)
     }
 
-    from javadoc.destinationDir
+    // Add sources to jar 
+    from sourceSets.main.allSource
 }
-jar.dependsOn javadoc
-
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-

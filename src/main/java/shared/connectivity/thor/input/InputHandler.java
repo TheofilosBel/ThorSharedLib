@@ -22,7 +22,7 @@ public class InputHandler {
     }
 
     /**
-     * Reads the query and schema name and stores them in the Class's fields
+     * Reads the query and schema name and stores them.
      */
     public void readInput() {
         Scanner console = new Scanner(System.in); // create a Scanner
@@ -37,6 +37,7 @@ public class InputHandler {
         console.close(); // delete when using loop
 
         // Keep the system open for one query only
+        // TODO decide whow are we going to update it 
         this.shutDownSystem = true;
     }
 
@@ -55,7 +56,7 @@ public class InputHandler {
     }
 
     /**
-     * @return the closeSystem
+     * @return True if Thor ordered a systemShutdown
      */
     public Boolean shutDownSystem() {
         return shutDownSystem;
