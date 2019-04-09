@@ -14,7 +14,7 @@ public interface ResultInterface {
      * The List<Response.ColumnValuePair> is a field in the Response.Result
      * Class. Thus each Result must be able to fill that. 
      */
-    public Collection<Response.ColumnValuePair> getColumnValuePairs();
+    public Collection<ColumnValuePair> getColumnValuePairs();
 
 
     /**
