@@ -69,20 +69,20 @@ public class Response<R extends ResultInterface> {
         this.componentsTime = componentsTime;
         this.componentStatistics = componentStatistics;
 
-        // // Update the percentage property of the componentsTime list.
+        // Update the percentage property of the componentsTime list.
         // for (ComponentTime componentTime : this.componentsTime) {
         //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
         // }
 
         // Compute the total time spent in the components.
-       this.totalTime = 0.0;
-       for (ComponentTime pair : componentsTime) {
-           this.totalTime += pair.getTime();
-       }
+        this.totalTime = 0.0;
+        for (ComponentTime pair : componentsTime) {
+            this.totalTime += pair.getTime();
+        }
 
-       // Format the total time (round to 2 decimal points).
-       DecimalFormat df = new DecimalFormat("#0.##");
-       this.totalTime = Double.valueOf(df.format(this.totalTime));
+        // Format the total time (round to 2 decimal points).
+        DecimalFormat df = new DecimalFormat("#0.##");
+        this.totalTime = Double.valueOf(df.format(this.totalTime));
 
         // Create a Result object for every tuple.
         this.results = new ArrayList<Result<R>>();
@@ -98,8 +98,10 @@ public class Response<R extends ResultInterface> {
      * response and render it.
      */
     public void sendToTHOR() {
-        Gson gson = new Gson();   // Create a JSON 
-        String json = gson.toJson(this);
+        Gson gson = new Gson();              // Create a JSON 
+        String json = gson.toJson(this);     // Convert this to JSON.
+
+        // Print json in a way thor can read it.
         System.out.println("<json>");
         System.out.println(json);
         System.out.println("<json>");
