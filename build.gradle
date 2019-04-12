@@ -9,9 +9,11 @@
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '4.0.4'   // The Plugin that creates a standalone JAR
+    id 'com.github.johnrengelman.shadow' version '4.0.4'         // The Plugin that creates a standalone JAR
+    id "com.github.breadmoirai.github-release" version "2.2.8"   // The Pluign that releashes to lib to github
 }
 
+// Project version.
 version = '0.1.0'
 
 repositories {
@@ -34,4 +36,51 @@ jar {
 
     // Add sources to jar 
     from sourceSets.main.allSource
+}
+
+// Checks for the existance of GitHubAuthToken 
+task("checkGhAuthProperty") {
+    if (!project.hasProperty('GitHubAuthToken')) {
+        throw new InvalidUserDataException(
+            "GitHub Auth token not provided. " +
+            "Please create a gradle.properties file containing that property like :\n" +
+            "GitHubAuthToken = XXX "
+        )
+    } else {
+        println "Found Auth Token!"
+    }
+}
+
+// The GitHub Release Task
+githubRelease {    
+    token "$GitHubAuthToken" // This is your personal access token with Repo permissions
+                        // You get this from your user settings > developer settings
+                        // If this value is not set, a login dialog will prompt you for your credentials.
+                        // 2fa is not supported
+    owner "TheofilosBel"            // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
+    repo "ThorSharedLib"            // by default this is set to your project name
+    tagName "v${project.version}"   // by default this is set to "v${project.version}"
+    targetCommitish "master"        // by default this is set to "master"
+    releaseName "v${project.version}"    // Release title, by default this is the same as the tagName
+    body ""           // by default this is empty
+    draft false       // by default this is false
+    prerelease true   // by default this is false
+    releaseAssets jar.destinationDirectory.getAsFile().get().listFiles()   // this points to which files you want to upload as assets with your release
+    overwrite true      // by default false; if set to true, will delete an existing release with the same tag and name
+    apiEndpoint "https://api.github.com"      // should only change for github enterprise users
+}
+
+// Make GithubReleas depend on checkGhAuthProperty
+tasks.githubRelease.dependsOn tasks.checkGhAuthProperty
+
+// Show the properties
+task showProperties { 
+    doLast {
+        println "Version: $version" 
+        println "Auth token property: $GitHubAuthToken" 
+        if (project.hasProperty('GitHubAuthToken')) {
+            println "We have auth property" 
+        }
+
+    } 
 }
