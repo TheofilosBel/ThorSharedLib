@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.google.gson.Gson;
 
+import shared.connectivity.thor.response.Architecture.ArchitectureLink;
+import shared.connectivity.thor.response.Architecture.ArchitectureNode;
+
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
@@ -15,8 +18,7 @@ public class Response<R extends ResultInterface> {
     private String id;                                      // The id of the current system (the name in lowercase ans without spaces).
     private String name;                                    // The name of the current system.
     private Architecture architecture;                      // The architecture of the system.
-    private List<ComponentTime> componentsTime;             // Saves the time taken by every component of the system.
-    private List<ComponentStatistics> componentStatistics;  // Saves the statistics that each component want to present to the user. 
+    private List<ComponentTime> componentsTime;             // Saves the time taken by every component of the system.    
     private double totalTime;                               // The total running time of the system.
     private List<Result<R>> results;                        // The top results returned by the system.
 
@@ -24,65 +26,49 @@ public class Response<R extends ResultInterface> {
      * Constructor without {@link ComponentStatistics}.
      */
     public Response(
-      String id, String name, Architecture architecture,
-      List<ComponentTime> componentsTime, List<R> topResults
+      String id, String name, List<Component> components, List<R> topResults
     ) {
         this.id = id;
-        this.name = name;
-        this.architecture = architecture;
-        this.componentsTime = componentsTime;
-        this.componentStatistics = null;
+        this.name = name;        
+        this.componentsTime = new ArrayList<>();     
 
+        // Loop the Components and :
+        //  - Create ComponentTime object for each component.
+        //  - Compute the total time of execution.
+        //  - Create the Architecture.
+        this.totalTime = 0.0;
+        List<ArchitectureNode> nodes = new ArrayList<>();
+        List<ArchitectureLink> links = new ArrayList<>();
+        for (Component comp: components) {
+            // Times.
+            this.componentsTime.add(new ComponentTime(comp.getName(), comp.getTime()));
+            this.totalTime += comp.getTime();
+
+            // Architecture.
+            nodes.add(new ArchitectureNode(comp.getId(), comp.getName()));
+            List<Component> compsConnections = comp.getOutGoingConnections();  // The component's outgoing connections.
+            List<String> connLabels = comp.getOutGoingLabels();                // The labels for the above connections.
+            for (int idx = 0; idx < connLabels.size(); idx++) {
+                links.add(new ArchitectureLink(
+                    comp.getId(), compsConnections.get(idx).getId(), connLabels.get(idx)
+                ));
+            }
+        }
+        this.architecture = new Architecture(nodes, links);
+
+        // Format the total time (round to 2 decimal points).
+        DecimalFormat df = new DecimalFormat("#0.##");
+        this.totalTime = Double.valueOf(df.format(this.totalTime));
+
+        // ---------------------------
+        // TODO UPDATE COMPONENT STATS
+        // ---------------------------
+                
         // // Update the percentage property of the componentsTime list.
         // for (ComponentTime componentTime : this.componentsTime) {
         //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
         // }
-
-        // Compute the total time spent in the components.
-       this.totalTime = 0.0;
-        for (ComponentTime pair : componentsTime) {
-            this.totalTime += pair.getTime();
-        }
-
-        // Format the total time (round to 2 decimal points).
-        DecimalFormat df = new DecimalFormat("#0.##");
-        this.totalTime = Double.valueOf(df.format(this.totalTime));
-
-        // Create a Result object for every tuple.
-        this.results = new ArrayList<Result<R>>();
-        for (R systemResult : topResults) {
-            this.results.add(new Result<>(systemResult));
-        }
-    }
-
-    /**
-     * Constructor with {@link ComponentStatistics}.
-     */
-    public Response(
-      String id, String name, Architecture architecture, 
-      List<ComponentTime> componentsTime, List<ComponentStatistics> componentStatistics,
-      List<R> topResults
-    ) {
-        this.id = id;
-        this.name = name;
-        this.architecture = architecture;
-        this.componentsTime = componentsTime;
-        this.componentStatistics = componentStatistics;
-
-        // Update the percentage property of the componentsTime list.
-        // for (ComponentTime componentTime : this.componentsTime) {
-        //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
-        // }
-
-        // Compute the total time spent in the components.
-        this.totalTime = 0.0;
-        for (ComponentTime pair : componentsTime) {
-            this.totalTime += pair.getTime();
-        }
-
-        // Format the total time (round to 2 decimal points).
-        DecimalFormat df = new DecimalFormat("#0.##");
-        this.totalTime = Double.valueOf(df.format(this.totalTime));
+                            
 
         // Create a Result object for every tuple.
         this.results = new ArrayList<Result<R>>();
