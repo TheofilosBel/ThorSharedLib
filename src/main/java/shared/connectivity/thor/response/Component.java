@@ -11,10 +11,10 @@ import java.util.List;
 public class Component {
     private static Integer COMPONENT_COUNT = 0;
 
-    private Integer id;                                // Component Id.
+    private Integer id;                            // Component Id.
     private String name;                           // Component Name.
     private Double time;                           // Time it took to execute.
-    private List<InfoElement> componentInfo;       // A list of Component Information.
+    private List<Table> componentInfo;             // A list of Component Information.
     private List<Component> outGoingConnections;   // A list of Components which are connected with this Component on the systems workflow.
     private List<String> outGoingLabels;           // A list ot labels for the above connections.
 
@@ -39,7 +39,7 @@ public class Component {
      * @param destination The destination Component.
      * @param label The label to put on this connection.
      */
-    public void connectComponent(Component destination, String label) {
+    public void connectWith(Component destination, String label) {
         this.outGoingConnections.add(destination);
         this.outGoingLabels.add(label);
     }
@@ -66,7 +66,7 @@ public class Component {
     /**
      * @return the componentInfo
      */
-    public List<InfoElement> getComponentInfo() {
+    public List<Table> getComponentInfo() {
         return componentInfo;
     }
 
@@ -103,7 +103,7 @@ public class Component {
     /**
      * @param componentInfo the componentInfo to set
      */
-    public void setComponentInfo(List<InfoElement> componentInfo) {
+    public void setComponentInfo(List<Table> componentInfo) {
         this.componentInfo = componentInfo;
     }
 

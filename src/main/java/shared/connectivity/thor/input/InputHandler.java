@@ -20,7 +20,7 @@ public class InputHandler {
         this.schemaName = null;
         this.shutDownSystem = false;
     }
-
+  
     /**
      * Reads the query and schema name and stores them.
      */
@@ -30,15 +30,20 @@ public class InputHandler {
 
         // Read the parameters needed for the execution from the stdin.            
         this.query = console.nextLine();
-        this.schemaName = console.nextLine();            
+
+        // If the query is equal to '%exit%' then we need to stop the 
+        // execution of the program using the handler.
+        if (this.query.equals("%exit%")) {
+            this.shutDownSystem = false;
+        }
+        // Else read the schema Name to which we will execute the above query.
+        else {
+            this.schemaName = console.nextLine();
+        }
 
         // Print a line to indicate that the input to the program ends here.
         System.out.println("</input>");
-        console.close(); // delete when using loop
-
-        // Keep the system open for one query only
-        // TODO decide whow are we going to update it 
-        this.shutDownSystem = true;
+        console.close(); // delete when using loop                
     }
 
     /**

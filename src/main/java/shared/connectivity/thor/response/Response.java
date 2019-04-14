@@ -1,12 +1,11 @@
 package shared.connectivity.thor.response;
 
-import java.util.List;
-
 import com.google.gson.Gson;
 
 import shared.connectivity.thor.response.Architecture.ArchitectureLink;
 import shared.connectivity.thor.response.Architecture.ArchitectureNode;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.text.DecimalFormat;
 
