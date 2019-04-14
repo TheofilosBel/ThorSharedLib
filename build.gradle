@@ -70,8 +70,9 @@ githubRelease {
     apiEndpoint "https://api.github.com"      // should only change for github enterprise users
 }
 
-// Make GithubReleas depend on checkGhAuthProperty
+// Make GithubReleas depend on checkGhAuthProperty / jar
 tasks.githubRelease.dependsOn tasks.checkGhAuthProperty
+tasks.githubRelease.dependsOn shadowJar
 
 // Show the properties
 task showProperties { 

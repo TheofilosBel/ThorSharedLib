@@ -30,6 +30,7 @@ public class Component {
         this.id = COMPONENT_COUNT++;
         this.componentInfo = new ArrayList<>();
         this.outGoingConnections = new ArrayList<>();
+        this.outGoingLabels = new ArrayList<>();
     }
 
     /**
@@ -105,6 +106,13 @@ public class Component {
      */
     public void setComponentInfo(List<Table> componentInfo) {
         this.componentInfo = componentInfo;
+    }
+
+    /**
+     * @param componentInfo the componentInfo to add.
+     */
+    public void addComponentInfo(Table componentInfo){
+        this.componentInfo.add(componentInfo);
     }
 
     /**

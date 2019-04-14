@@ -14,10 +14,21 @@ import java.text.DecimalFormat;
  */
 public class Response<R extends ResultInterface> {
     
+    private static class ComponentStats {
+        public String componentName;
+        public List<Table> componentInfo;
+
+        public ComponentStats(String name, List<Table> componentInfo) {
+            this.componentName = name;
+            this.componentInfo = componentInfo;
+        }
+    }
+
     private String id;                                      // The id of the current system (the name in lowercase ans without spaces).
     private String name;                                    // The name of the current system.
     private Architecture architecture;                      // The architecture of the system.
-    private List<ComponentTime> componentsTime;             // Saves the time taken by every component of the system.    
+    private List<ComponentTime> componentsTime;             // Saves the time taken by every component of the system.
+    private List<ComponentStats> componentStats;           // Saves the statistics taken by every component of the system
     private double totalTime;                               // The total running time of the system.
     private List<Result<R>> results;                        // The top results returned by the system.
 
@@ -29,11 +40,13 @@ public class Response<R extends ResultInterface> {
     ) {
         this.id = id;
         this.name = name;        
-        this.componentsTime = new ArrayList<>();     
+        this.componentsTime = new ArrayList<>();
+        this.componentsStats = new ArrayList<>();
 
         // Loop the Components and :
         //  - Create ComponentTime object for each component.
         //  - Compute the total time of execution.
+        //  - Store component statistics.
         //  - Create the Architecture.
         this.totalTime = 0.0;
         List<ArchitectureNode> nodes = new ArrayList<>();
@@ -42,6 +55,9 @@ public class Response<R extends ResultInterface> {
             // Times.
             this.componentsTime.add(new ComponentTime(comp.getName(), comp.getTime()));
             this.totalTime += comp.getTime();
+
+            // Stats
+            this.componentsStats.add(new ComponentStats(comp.getName(), comp.getComponentInfo()));
 
             // Architecture.
             nodes.add(new ArchitectureNode(comp.getId(), comp.getName()));
@@ -108,6 +124,10 @@ public class Response<R extends ResultInterface> {
 
     public List<ComponentTime> getComponentsTime() {
         return this.componentsTime;
+    }
+    
+    public List<ComponentStats> getComponentsStats() {
+        return componentsStats;
     }
 
     public double getTotalTime() {
