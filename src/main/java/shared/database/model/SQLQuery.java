@@ -37,7 +37,7 @@ public class SQLQuery {
     /**     
      * Adds a Aggregation Function on a column to the selectedElements List.
      * 
-     * @param aggregateTerm the Aggregation Function applied on a column.
+     * @param aggregationTerm the Aggregation Function applied on a column.
      * @param column the column.
      * @return A boolean indicating if the insertion succeeded.
      */

@@ -19,6 +19,15 @@ public class ColumnValuePair {
         this.value = value;
     }
 
+     /**
+     * Constructor without table field.
+     */
+    public ColumnValuePair(String column, Object value) {
+        this.column = column;
+        this.table = null;
+        this.value = value;
+    }
+
     /**
      * @return The name of the column.
      */

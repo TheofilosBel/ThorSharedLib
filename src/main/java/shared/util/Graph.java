@@ -108,7 +108,7 @@ public class Graph<V> {
      * Make this graph a clone of the parameter Graph. If the actual 
      * data of the Graph will be cloned is up to the Type of T.
      * 
-     * @param graph graph to clone
+     * @param graphToClone graph to clone
      * @param fillDataToClonedData a maps between param graph's data and this graph's cloned data. if its not null fill it.
      */    
     public void cloneLikeGraph(Graph<V> graphToClone, HashMap<V, V> fillDataToClonedData) {        
