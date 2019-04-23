@@ -13,22 +13,11 @@ import java.text.DecimalFormat;
  * Represents the response of a system to a query.
  */
 public class Response<R extends ResultInterface> {
-    
-    private static class ComponentStats {
-        public String componentName;
-        public List<Table> componentInfo;
-
-        public ComponentStats(String name, List<Table> componentInfo) {
-            this.componentName = name;
-            this.componentInfo = componentInfo;
-        }
-    }
-
     private String id;                                      // The id of the current system (the name in lowercase ans without spaces).
     private String name;                                    // The name of the current system.
     private Architecture architecture;                      // The architecture of the system.
     private List<ComponentTime> componentsTime;             // Saves the time taken by every component of the system.
-    private List<ComponentStats> componentStats;           // Saves the statistics taken by every component of the system
+    private List<ComponentStats> componentStats;            // Saves the statistics taken by every component of the system
     private double totalTime;                               // The total running time of the system.
     private List<Result<R>> results;                        // The top results returned by the system.
 
