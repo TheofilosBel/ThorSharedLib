@@ -41,7 +41,7 @@ public class Response<R extends ResultInterface> {
         this.id = id;
         this.name = name;        
         this.componentsTime = new ArrayList<>();
-        this.componentsStats = new ArrayList<>();
+        this.componentStats = new ArrayList<>();
 
         // Loop the Components and :
         //  - Create ComponentTime object for each component.
@@ -57,7 +57,7 @@ public class Response<R extends ResultInterface> {
             this.totalTime += comp.getTime();
 
             // Stats
-            this.componentsStats.add(new ComponentStats(comp.getName(), comp.getComponentInfo()));
+            this.componentStats.add(new ComponentStats(comp.getName(), comp.getComponentInfo()));
 
             // Architecture.
             nodes.add(new ArchitectureNode(comp.getId(), comp.getName()));
@@ -106,6 +106,7 @@ public class Response<R extends ResultInterface> {
         System.out.println("<json>");
         System.out.println(json);
         System.out.println("<json>");
+        System.out.println();
     }
 
 
@@ -126,8 +127,8 @@ public class Response<R extends ResultInterface> {
         return this.componentsTime;
     }
     
-    public List<ComponentStats> getComponentsStats() {
-        return componentsStats;
+    public List<ComponentStats> getcomponentStats() {
+        return componentStats;
     }
 
     public double getTotalTime() {

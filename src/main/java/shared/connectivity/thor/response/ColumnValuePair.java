@@ -1,6 +1,8 @@
 package shared.connectivity.thor.response;
 
-// Represents a column-value pair of a tuple.
+/**
+ * Represents a column-value pair of a tuple. 
+ */
 public class ColumnValuePair {
 
     private String column;

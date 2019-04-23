@@ -1,7 +1,7 @@
 package shared.connectivity.thor.response;
 
 import java.util.Collection;
-import java.util.List;
+
 
 /**
  * This class must be implemented by the "Result" Class produced by each system
@@ -11,23 +11,21 @@ import java.util.List;
 public interface ResultInterface {
 
     /**
-     * The List<Response.ColumnValuePair> is a field in the Response.Result
-     * Class. Thus each Result must be able to fill that. 
+     * The List<ColumnValuePair> is a list containing the 
+     * results of the system in pairs of :
+     *  <column name containing value> : <value>
      */
     public Collection<ColumnValuePair> getColumnValuePairs();
 
 
     /**
-     * Networks is a field in the Response.Result Class.
-     * Thus each Result must be able to fill that. Networks is 
-     * a list of Table Names used to join and create this result.
+	 * Networks is a list of Table Names used to join and create this result.
      */
     public Collection<String> getNetworks();
 
 
     /**
-     * Networks is a field in the Response.Result Class.
-     * Thus each Result must be able to fill that.
+     * The Query used to create this result.
      */
     public String getQuery();
 
