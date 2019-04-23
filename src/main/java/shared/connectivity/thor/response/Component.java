@@ -34,6 +34,7 @@ public class Component {
         this.componentInfo = new ArrayList<>();
         this.outGoingConnections = new ArrayList<>();
         this.outGoingLabels = new ArrayList<>();
+        this.time = 0D;
     }
 
     /**
