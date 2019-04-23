@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 /** 
- * Represents the response of a system to a query.
+ * This class represents the response of a system to a query.
  */
 public class Response<R extends ResultInterface> {
     
     private static class ComponentStats {
+
         public String componentName;
         public List<Table> componentInfo;
 
@@ -22,6 +23,7 @@ public class Response<R extends ResultInterface> {
             this.componentName = name;
             this.componentInfo = componentInfo;
         }
+
     }
 
     private String id;                                      // The id of the current system (the name in lowercase ans without spaces).
@@ -35,9 +37,7 @@ public class Response<R extends ResultInterface> {
     /**
      * Constructor without {@link ComponentStatistics}.
      */
-    public Response(
-      String id, String name, List<Component> components, List<R> topResults
-    ) {
+    public Response(String id, String name, List<Component> components, List<R> topResults) {
         this.id = id;
         this.name = name;        
         this.componentsTime = new ArrayList<>();
