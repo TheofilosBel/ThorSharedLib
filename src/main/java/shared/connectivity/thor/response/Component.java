@@ -5,27 +5,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a Component and its used to send info related to a
- * component directly to THOR.
+ * This class represents a component and stores information (related to the component)
+ * which will be displayed in the front end.
  */
 public class Component {
+
     private static Integer COMPONENT_COUNT = 0;
 
-    private Integer id;                            // Component Id.
-    private String name;                           // Component Name.
-    private Double time;                           // Time it took to execute.
-    private List<Table> componentInfo;             // A list of Component Information.
-    private List<Component> outGoingConnections;   // A list of Components which are connected with this Component on the systems workflow.
-    private List<String> outGoingLabels;           // A list ot labels for the above connections.
+    private Integer id; // The id of the component.
+    private String name; // The name of the component.
+    private Double time; // The execution time of the component.
+    private List<Table> componentInfo; // The information of the component.
+
+    // A list of components that are connected with the current one in the
+    // system's directed architecture graph and their corresponding labels.
+    // Only out going edges are considered.
+    private List<Component> outGoingConnections;
+    private List<String> outGoingLabels;
 
     /** 
      * Constructor 
      */
     public Component(String name) {
-        if (name.isEmpty()) 
-            this.name = "unknown";
-        else 
-            this.name = name;
+        if (name.isEmpty()) { this.name = "unknown"; }
+        else { this.name = name; }
 
         this.id = COMPONENT_COUNT++;
         this.componentInfo = new ArrayList<>();
@@ -34,92 +37,90 @@ public class Component {
     }
 
     /**
-     * Connect with this component with destination component. The direction of the arrow 
-     * in the systems architecture graph will be : this -[label]-> destination 
+     * Connects the current component with the provided component, with a directed edge in the
+     * system's architecture graph. The edge is directed from the current component to the
+     * provided one, to indicate that the output of the former serves as an input for the latter.
      * 
-     * @param destination The destination Component.
-     * @param label The label to put on this connection.
+     * @param destination The destination component.
+     * @param label The label of the edge.
      */
     public void connectWith(Component destination, String label) {
         this.outGoingConnections.add(destination);
         this.outGoingLabels.add(label);
     }
 
-
-    /***********************
-     * Getters And Setters *
-     ***********************/
+    /**
+     * @return The id of the component.
+     */
+    public String getId() {
+        return this.name.charAt(0) + id.toString();
+    }
 
     /**
-     * @return the name
+     * @return The name of the component.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * @return the time
+     * @return The execution time of the component.
      */
     public Double getTime() {
         return time;
     }
 
     /**
-     * @return the componentInfo
+     * @return The information of the component.
      */
     public List<Table> getComponentInfo() {
         return componentInfo;
     }
 
     /**
-     * @return the outGoingConnections
+     * @return The out going connections of the component.
      */
     public List<Component> getOutGoingConnections() {
         return outGoingConnections;
     }
 
     /**
-     * @return the outGoingLabels
+     * @return The labels fo the out going connections of the component.
      */
     public List<String> getOutGoingLabels() {
         return outGoingLabels;
     }
 
-    
     /**
-     * @param name the name to set
+     * @param name The name of the component.
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * @param time the time to set
+     * @param time The execution time of the component.
      */
     public void setTime(Double time) {
+        // Format the time (round to 2 decimal points).
         DecimalFormat df = new DecimalFormat("#0.##");
         this.time = Double.valueOf(df.format(time));
     }
 
     /**
-     * @param componentInfo the componentInfo to set
+     * @param componentInfo The information of the component.
      */
     public void setComponentInfo(List<Table> componentInfo) {
         this.componentInfo = componentInfo;
     }
 
     /**
-     * @param componentInfo the componentInfo to add.
+     * Adds new information for the component.
+     * 
+     * @param componentInfo The information to add.
      */
     public void addComponentInfo(Table componentInfo){
         this.componentInfo.add(componentInfo);
-    }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return this.name.charAt(0) + id.toString();
     }
 
 }

@@ -1,46 +1,34 @@
 package shared.connectivity.thor.response;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
- * This class must be implemented by the "Result" Class produced by each system
- * that wants to get added to Thor. The "Result" Class is whatever the system
- * wants to display on Thor Results page
+ * This interface must be implemented by a class that represents a result (tuple) of the system.
  */
 public interface ResultInterface {
 
     /**
-     * The List<Response.ColumnValuePair> is a field in the Response.Result
-     * Class. Thus each Result must be able to fill that. 
+     * A list that contains the <Column, Value> pairs of the result (tuple).
      */
     public Collection<ColumnValuePair> getColumnValuePairs();
 
-
     /**
-     * Networks is a field in the Response.Result Class.
-     * Thus each Result must be able to fill that. Networks is 
-     * a list of Table Names used to join and create this result.
+	 * A list with the names of the tables that were joined to produce the result.
      */
     public Collection<String> getNetworks();
 
-
     /**
-     * Networks is a field in the Response.Result Class.
-     * Thus each Result must be able to fill that.
+     * The SQL query that was executed to produce the result.
      */
     public String getQuery();
 
-
     /**
-     * Returns true if the Result has a score field separate from 
-     * the column Value Pairs
+     * Returns true if the system assigns a score to every result.
      */
     public boolean hasScoreField();
 
-
     /**
-     * Is hasScoreField is true then getScore must return the Results score
+     * Returns the result's score if one is present.
      */
     public double getResultScore();
 

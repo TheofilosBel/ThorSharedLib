@@ -1,6 +1,8 @@
 package shared.connectivity.thor.input;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * This class handles the input for the systems connected to thor.
@@ -14,7 +16,8 @@ public class InputHandler {
 
     private String query;
     private String schemaName;
-    private Boolean shutDownSystem; // Indicates whether the application sent a shutdown message.
+    private Integer resultsNum; // The maximum number of results to be returned by the system.
+    private Boolean shutDownSystem; // Indicates whether the application ordered a shutdown.
 
     /**
      * Constructor.
@@ -24,28 +27,37 @@ public class InputHandler {
         this.schemaName = null;
         this.shutDownSystem = false;
     }
-  
+
     /**
      * Reads the input line by line, and stores it.
      */
     public void readInput() {
-        // Create a Scanner.
-        Scanner console = new Scanner(System.in);
+        InputStreamReader r = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(r);
+
         System.out.println("<input>");
 
-        this.query = console.nextLine(); // Read the query.
+        // Read the parameters needed for the execution from the standard input.
+        try {
+            this.query = br.readLine();
 
-        // The '%exit' query is used to signal the shutdown.
-        if (this.query.equals("%exit%")) {
-            this.shutDownSystem = false;
-        }
-        else {
-            this.schemaName = console.nextLine(); // Read the schema name.
+            // The '%exit' query signals the systems to shutdown.
+            if (this.query.equals("%exit%")) {
+                this.shutDownSystem = true;
+            }
+            else {
+                this.schemaName = br.readLine();
+                this.resultsNum = br.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            this.query = "";
+            this.schemaName = "";
+            this.shutDownSystem = true;
         }
 
         // Print a line to indicate that the input to the program ends here.
         System.out.println("</input>");
-        console.close(); // delete when using loop      
     }
 
     /**
@@ -67,6 +79,13 @@ public class InputHandler {
      */
     public Boolean shutDownSystem() {
         return shutDownSystem;
+    }
+
+    /**
+     * @return The maximum number of results to be returned by the system.
+     */
+    public Integer getResultsNumber() {
+        return resultsNum;
     }
 
 }

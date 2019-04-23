@@ -2,24 +2,36 @@ package shared.connectivity.thor.response;
 
 import java.text.DecimalFormat;
 
-// Represents the time taken by a component of the system.
+/** 
+ * This class represents the execution time of a component of the system.
+ */
 public class ComponentTime {
 
-    private String component;
+    private String componentName; // The name of the component.
     private Double time;
     // private Double percentage;
 
-    public ComponentTime(String component, Double time) {
-        this.component = component;
-
+    /**
+     * Constructor.
+     */
+    public ComponentTime(String componentName, Double time) {
+        this.componentName = componentName;
+        
+        // Format the time (round to 2 decimal points).
         DecimalFormat df = new DecimalFormat("#0.##");
         this.time = Double.valueOf(df.format(time));
     }
 
-    public String getComponent() {
-        return this.component;
+    /**
+     * @return The name of the component.
+     */
+    public String getComponentName() {
+        return this.componentName;
     }
-    
+
+    /**
+     * @return The execution time of the component.
+     */
     public Double getTime() {
         return this.time;
     }

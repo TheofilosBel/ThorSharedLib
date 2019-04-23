@@ -5,23 +5,26 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * This class represents a Table containing component statistics.
+ * This class represents a table. It is used to save the statistics of the components.
  */
 public class Table {
 
     /**
-     * This class represents a {@link Table} Row.
+     * This class represents a {@link Table} row. A {@link Table} can have a list of rows.
      */
     public static class Row {
-        List<String> values;
+
+        List<String> values; // The values of the row.
         
-        /** Constructor */
+        /**
+         * Constructor.
+         */
         public Row(List<String> values) {
             this.values = values;
         }
 
         /**
-         * @return the values of this row.
+         * @return The values of the row.
          */
         public List<String> getValues() {
             return values;
@@ -29,14 +32,14 @@ public class Table {
 
     }
 
-    private String title;                 // The table Title 
-    private List<String> columnTitles;    // The column Titles
-    private List<Row> rows;               // The table rows.
+    private String title; // The title of the table.
+    private List<String> columnTitles; // The titles of the table's columns.
+    private List<Row> rows; // The rows of the table.
 
     /** 
-     * Use this constructor if only each row contains 2 values.
-     * The columnTitles will be initialized to "Description" ,"Value"
-     * The table title will be left empty
+     * Use this constructor in the case where each row contains 2 values only.
+     * The column titles will be initialized to the default values "Description", "Value".
+     * The table title will be left empty.
      */
     public Table(List<Row> rows) {
         this.title = null;
@@ -45,8 +48,9 @@ public class Table {
     }
 
     /** 
-     * Use this constructor if only each row contains 2 values.
-     * The columnTitles will be initialized to "Description" ,"Value"     
+     * Use this constructor in the case where each row contains 2 values only.
+     * The column titles will be initialized to the default values "Description", "Value".
+     * The table title will be set to the value of the first argument.
      */
     public Table(String title, List<Row> rows) {
         this.title = title;
@@ -55,10 +59,9 @@ public class Table {
     }
 
     /** 
-     * Use this constructor in case you want to create a custom table.
-     * Make sure that the number of columnTitles equals to the number of values 
-     * each row contains.
-     * The title will be left empty.
+     * Use this constructor to create a table with rows of any size.
+     * Make sure that the length of the columnTitles argument is equal to the length of each row.
+     * The table title will be left empty.
      */    
     public Table(List<String> columnTitles, List<Row> rows) {
         this.title = null;
@@ -67,9 +70,9 @@ public class Table {
     }
 
     /** 
-     * Use this constructor in case you want to create a custom table.
-     * Make sure that the number of columnTitles equals to the number of values 
-     * each row contains.     
+     * Use this constructor to create a table with rows of any size.
+     * Make sure that the length of the columnTitles argument is equal to the length of each row.
+     * The table title will be set to the value of the first argument.
      */    
     public Table(String title, List<String> columnTitles, List<Row> rows) {
         this.title = title;
@@ -77,28 +80,22 @@ public class Table {
         this.rows = rows;
     }
 
-
-
-    /***********************
-     * Getters And Setters *
-     ***********************/
-
     /**
-     * @return the title
+     * @return The title of the table.
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * @return the columnTitles
+     * @return The titles of the columns.
      */
     public List<String> getColumnTitles() {
         return columnTitles;
     }
 
     /**
-     * @return the rows
+     * @return The rows of the table.
      */
     public List<Row> getRows() {
         return rows;

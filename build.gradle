@@ -7,38 +7,37 @@
  */
 
 plugins {
-    // Apply the java-library plugin to add support for Java Library
+    // Apply the java-library plugin to add support for Java Library.
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '4.0.4'         // The Plugin that creates a standalone JAR
-    id "com.github.breadmoirai.github-release" version "2.2.8"   // The Pluign that releashes to lib to github
+    id 'com.github.johnrengelman.shadow' version '4.0.4' // The Plugin that creates a standalone JAR.
+    id "com.github.breadmoirai.github-release" version "2.2.8" // The Pluign that releases the lib to github.
 }
 
-// Project version.
-version = '0.1.0'
+version = '0.1.0' // Project version.
 
 repositories {
-    // Use jcenter for resolving your dependencies.
+    // Use jcenter to resolve your dependencies.
     jcenter()
     mavenCentral()
 }
 
 dependencies {
-    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'   // For the Basic DataSource interface
-    implementation 'com.google.code.gson:gson:2.8.5'                      // Google Gson    
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4' // For the Basic DataSource interface
+    implementation 'com.google.code.gson:gson:2.8.5' // Google Gson    
 }
 
-// Modify the jar task
+// Modify the jar task.
 jar {
     manifest {
         attributes('Implementation-Title': project.name,
                    'Implementation-Version': project.version)
     }
 
-    // Add sources to jar 
+    // Add sources to jar.
     from sourceSets.main.allSource
 }
 
-// Checks for the existance of GitHubAuthToken 
+// Checks for the existance of GitHubAuthToken.
 task("checkGhAuthProperty") {
     if (!project.hasProperty('GitHubAuthToken')) {
         throw new InvalidUserDataException(
@@ -57,24 +56,24 @@ githubRelease {
                         // You get this from your user settings > developer settings
                         // If this value is not set, a login dialog will prompt you for your credentials.
                         // 2fa is not supported
-    owner "TheofilosBel"            // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
-    repo "ThorSharedLib"            // by default this is set to your project name
-    tagName "v${project.version}"   // by default this is set to "v${project.version}"
-    targetCommitish "master"        // by default this is set to "master"
-    releaseName "v${project.version}"    // Release title, by default this is the same as the tagName
-    body ""           // by default this is empty
-    draft false       // by default this is false
-    prerelease true   // by default this is false
-    releaseAssets jar.destinationDirectory.getAsFile().get().listFiles()   // this points to which files you want to upload as assets with your release
-    overwrite true      // by default false; if set to true, will delete an existing release with the same tag and name
-    apiEndpoint "https://api.github.com"      // should only change for github enterprise users
+    owner "TheofilosBel"          // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
+    repo "ThorSharedLib"          // by default this is set to your project name
+    tagName "v${project.version}" // by default this is set to "v${project.version}"
+    targetCommitish "master"      // by default this is set to "master"
+    releaseName "v${project.version}" // Release title, by default this is the same as the tagName
+    body ""         // by default this is empty
+    draft false     // by default this is false
+    prerelease true // by default this is false
+    releaseAssets jar.destinationDirectory.getAsFile().get().listFiles() // this points to which files you want to upload as assets with your release
+    overwrite true // by default false; if set to true, will delete an existing release with the same tag and name
+    apiEndpoint "https://api.github.com" // should only change for github enterprise users
 }
 
-// Make GithubReleas depend on checkGhAuthProperty / jar
+// Make GithubReleas depend on checkGhAuthProperty / jar.
 tasks.githubRelease.dependsOn tasks.checkGhAuthProperty
 tasks.githubRelease.dependsOn shadowJar
 
-// Show the properties
+// Show the properties.
 task showProperties { 
     doLast {
         println "Version: $version" 
