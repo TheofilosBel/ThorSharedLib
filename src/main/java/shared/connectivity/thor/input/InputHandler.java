@@ -47,7 +47,7 @@ public class InputHandler {
             }
             else {
                 this.schemaName = br.readLine();
-                this.resultsNum = br.read();
+                this.resultsNum = Integer.parseInt(br.readLine());
             }
         } catch (IOException e) {
             e.printStackTrace();
