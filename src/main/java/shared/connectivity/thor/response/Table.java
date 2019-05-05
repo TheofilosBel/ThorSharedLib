@@ -32,9 +32,9 @@ public class Table {
 
     }
 
-    private String title; // The title of the table.
-    private List<String> columnTitles; // The titles of the table's columns.
-    private List<Row> rows; // The rows of the table.
+    private String title;                // The title of the table.
+    private List<String> columnTitles;   // The titles of the table's columns.
+    private List<Row> columnValues;      // The rows of the table.
 
     /** 
      * Use this constructor in the case where each row contains 2 values only.
@@ -44,7 +44,7 @@ public class Table {
     public Table(List<Row> rows) {
         this.title = null;
         this.columnTitles = new ArrayList<>(Arrays.asList("Description", "Value"));
-        this.rows = rows;
+        this.columnValues = rows;
     }
 
     /** 
@@ -55,7 +55,7 @@ public class Table {
     public Table(String title, List<Row> rows) {
         this.title = title;
         this.columnTitles = new ArrayList<>(Arrays.asList("Description", "Value"));
-        this.rows = rows;
+        this.columnValues = rows;
     }
 
     /** 
@@ -66,7 +66,7 @@ public class Table {
     public Table(List<String> columnTitles, List<Row> rows) {
         this.title = null;
         this.columnTitles = columnTitles;
-        this.rows = rows;
+        this.columnValues = rows;
     }
 
     /** 
@@ -77,7 +77,7 @@ public class Table {
     public Table(String title, List<String> columnTitles, List<Row> rows) {
         this.title = title;
         this.columnTitles = columnTitles;
-        this.rows = rows;
+        this.columnValues = rows;
     }
 
     /**
@@ -98,7 +98,7 @@ public class Table {
      * @return The rows of the table.
      */
     public List<Row> getRows() {
-        return rows;
+        return columnValues;
     }
     
 }
