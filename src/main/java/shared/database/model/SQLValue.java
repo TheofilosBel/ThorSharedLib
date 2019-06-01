@@ -12,6 +12,10 @@ public abstract class SQLValue {
         this.type = new SQLType(type, maximumLength);
     }
 
+    public SQLValue(String type, Long maximumLength) {
+        this.type = new SQLType(type, maximumLength);
+    }
+
     // Getters and Setters.
     public SQLType getType() {
         return this.type;

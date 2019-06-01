@@ -77,7 +77,7 @@ public class DatabaseInfo {
                 String columnName = rs.getString("COLUMN_NAME");
                 String columnType = rs.getString("DATA_TYPE");
                 String columnKey = rs.getString("COLUMN_KEY");
-                Integer columnsCharacterMaximumLength = rs.getInt("CHARACTER_MAXIMUM_LENGTH");
+                Long columnsCharacterMaximumLength = rs.getLong("CHARACTER_MAXIMUM_LENGTH");
                 
                 // Skip the "avg_length" table since it is a temporary table that we use to save statistics.
                 if (tableName.equals("avg_length")) { continue; }

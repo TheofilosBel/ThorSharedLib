@@ -14,11 +14,15 @@ public class SQLType {
     public static SQLType NUMERIC_TYPE = new SQLType("int double", 0);
 
 
-
     private String type;
-    private Integer maximumLength;
+    private Long maximumLength;
 
     public SQLType(String type, Integer maximumLength) {
+        this.type = type;
+        this.maximumLength = maximumLength.longValue();
+    }
+
+    public SQLType(String type, Long maximumLength) {
         this.type = type;
         this.maximumLength = maximumLength;
     }
@@ -29,7 +33,7 @@ public class SQLType {
     }
     
     // Return columns maximum length.
-    public Integer getMaximumLength() {
+    public Long getMaximumLength() {
         return maximumLength;
     }
 

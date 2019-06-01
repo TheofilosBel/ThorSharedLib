@@ -6,7 +6,7 @@ public class SQLIntValue extends SQLValue {
     private Integer value;
 
     public SQLIntValue(Integer value) {
-        super("int", null);
+        super("int", 0);
         this.value = value;
     }
 

@@ -6,7 +6,7 @@ public class SQLDoubleValue extends SQLValue {
     private Double value;
 
     public SQLDoubleValue(Double value) {
-        super("double", null);
+        super("double", 0);
         this.value = value;
     }
 

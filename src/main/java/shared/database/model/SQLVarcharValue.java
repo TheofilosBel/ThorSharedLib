@@ -10,6 +10,11 @@ public class SQLVarcharValue extends SQLValue {
         this.value = value;
     }
 
+    public SQLVarcharValue(String value, Long maximumLength) {
+        super("varchar", maximumLength);
+        this.value = value;
+    }
+
      // Returns the length of the value in words (for text attributes only).
      @Override
      public int getLength() {
