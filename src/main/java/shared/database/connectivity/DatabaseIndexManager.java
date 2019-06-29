@@ -81,7 +81,7 @@ public class DatabaseIndexManager {
         try(PreparedStatement stmt = con.prepareStatement(query)) {
             // Parameterized the stmt in the right way.
             if (attribute.isIndexed()) 
-                stmt.setString(1, DatabaseUtil.prepareForBooleanSearch(keyword)); 
+                stmt.setString(1, DatabaseUtil.prepareForAndBooleanSearch(keyword)); 
             else 
                 stmt.setString(1, "%\"" + keyword + "\"%");
 
