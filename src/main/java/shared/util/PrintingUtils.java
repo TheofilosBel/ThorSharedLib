@@ -106,4 +106,21 @@ public class PrintingUtils {
 
         return retStr;
     }
+
+
+    // Finds the next char , skipping all the white space characters , starting from parameter index.
+    public static int findNextChar(String query, int index) {
+        int returnIndex = index;
+        // Loop till we get a non White Space char.
+        while (returnIndex < query.length() && isWhiteSpace(query.charAt(returnIndex)))
+            returnIndex++;
+        // Return the index
+        return returnIndex;
+    }
+
+    // Returns true if char is a white space char.
+    public static boolean isWhiteSpace(char c) {
+        return c == ' ' || c == '\t' || c == '\n';
+    }
+    
 }

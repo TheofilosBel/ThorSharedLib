@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 
+import shared.util.PrintingUtils;
+
 import java.util.Date;
 
 public class DatabaseUtil {
@@ -52,22 +54,27 @@ public class DatabaseUtil {
      * @return
      */
     public static String prepareForBooleanSearch(String phrase) {
-        // String booleanPhrase = "+";
-        // for(int index = 0; index < phrase.length(); index++) {
-        //     // Get the char of the index position.
-        //     char c = phrase.charAt(index);
+        String booleanPhrase = "+";        
+        int index = PrintingUtils.findNextChar(phrase, 0);
 
-        //     // Add the char to the boolean phrase
-        //     booleanPhrase += c;
+        while(index < phrase.length()) {
+            // Get the char of the index position.
+            char c = phrase.charAt(index);
+
+            // Add the char to the boolean phrase
+            booleanPhrase += c;
             
-        //     // Add a + sign in case of space
-        //     if (Parser.isWhiteSpace(c))
-        //         booleanPhrase += "+";                                     
-        // }
+            // Add a+ sign in case of space
+            if (PrintingUtils.isWhiteSpace(c)) {
+                booleanPhrase += "+";
+                index = PrintingUtils.findNextChar(phrase, index);
+            }
+            else {
+                index++;
+            }
+        }
 
-        // return booleanPhrase;
-        // return phrase;
-        return "\"" + phrase + "\"";
+        return booleanPhrase;        
     }
 
     public static void close(Connection connection) {
