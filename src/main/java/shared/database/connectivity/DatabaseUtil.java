@@ -45,7 +45,7 @@ public class DatabaseUtil {
         return (date != null) ? new Date(date.getTime()) : null;
     }    
     
-     /**
+    /**
      * Prepare a phrase for a boolean search. In this function add the char 
      * '+' in front of every word in the parameter phrase. This way every 
      * world myst be preset in the results returned by the search.
