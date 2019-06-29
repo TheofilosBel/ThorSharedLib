@@ -336,6 +336,13 @@ public class Graph<V> {
         List<ListNode> nodesToExpand = new ArrayList<>();     // A List holding the ListNodes of the GRAPH that we will expand.
         List<ListNode> finalNodes = new ArrayList<>();        // A final node is a node with no outGoing Edges. This list stores final SUB-GRAPH nodes.
 
+        // Check the special case where containedData contains only one 
+        // node, and return the graph containing that node only.
+        if (containedData.size() == 1) {
+            subGraph.addNode(containedData.iterator().next());
+            return subGraph;
+        }
+
         // Check nodes before starting the subGraph.
         if (containedData.isEmpty()) return subGraph;            
         if (checkNodesForSubGraph(containedData) == false)

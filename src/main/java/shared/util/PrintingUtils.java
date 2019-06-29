@@ -9,7 +9,14 @@ import java.util.Set;
 public class PrintingUtils {
 
 
-    // Escape ' char by escape char given as parameter
+    /**
+     * Escape char ch by adding the escpaeCH in front of it
+     * 
+     * @param str
+     * @param ch
+     * @param escapeCh
+     * @return
+     */
     public static String escapeCharacter(String str, char ch, char escapeCh) {        
         int indexOfChar = str.indexOf(ch);
         while(indexOfChar != -1) {

@@ -10,6 +10,8 @@ public class SQLColumn implements SchemaElement {
 
     public static final String PK_IDENTIFIER = "PRI";
     public static final String FK_IDENTIFIER = "FOR";
+    public static final String MUL_IDENTIFIER = "MUL";
+
 
     private SQLTable table;       // The name of the table the column belongs to.
     private String name;          // The column name.
@@ -95,6 +97,10 @@ public class SQLColumn implements SchemaElement {
     // Returns true if the database is indexed.
     public boolean isIndexed() {
         return this.isIndexed;
+    }
+
+    public boolean isPartOfMulIndex() {
+        return this.key.indexOf(MUL_IDENTIFIER) != -1;
     }
 
     // Returns true if the column is part of a table's primary key.

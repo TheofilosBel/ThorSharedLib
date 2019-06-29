@@ -121,12 +121,12 @@ public class SQLTuple {
             
                 // Add its value depending on the column type
                 if (column.getType().isTextual()) {
-                    this.addAttribute(column);
-                    this.addValue(new SQLVarcharValue(rs.getString(index+1), column.getType().getMaximumLength()));
+                    this.values.add(new SQLVarcharValue(rs.getString(index+1), column.getType().getMaximumLength()));
+                    this.attributes.add(column);
                 }
                 else if (column.getType().isInt()) {
-                    this.addAttribute(column);
-                    this.addValue(new SQLIntValue(rs.getInt(index+1)));
+                    this.values.add(new SQLIntValue(rs.getInt(index+1)));
+                    this.attributes.add(column);
                 }                
 
                 // Check if the column is part of the tuple's primary key.
@@ -148,12 +148,12 @@ public class SQLTuple {
             for (int index = 0; index < columns.size(); index++) {
                 SQLColumn column = columns.get(index);
                 if (column.getType().isTextual()) {
-                    this.addAttribute(column);
-                    this.addValue(new SQLVarcharValue(rs.getString(index+1), column.getType().getMaximumLength()));
+                    this.values.add(new SQLVarcharValue(rs.getString(index+1), column.getType().getMaximumLength()));
+                    this.attributes.add(column);
                 }
                 else if (column.getType().isInt()) {
-                    this.addAttribute(column);
-                    this.addValue(new SQLIntValue(rs.getInt(index+1)));
+                    this.values.add(new SQLIntValue(rs.getInt(index+1)));
+                    this.attributes.add(column);
                 }                
 
                 // Check if the column is part of the tuple's primary key.
@@ -265,12 +265,6 @@ public class SQLTuple {
         }
         rowOfValues += "|";
         str += rowOfValues + "\n" + separationLine;
-
-        // remove score from attribute list.
-        this.attributes.remove(this.attributes.size() - 1);
-
-        // Remove the value of the score column.
-        this.removeLastValue();
 
         return str;
     }

@@ -44,8 +44,8 @@ public class DatabaseUtil {
     public static Date toSqlDate(java.util.Date date) {
         return (date != null) ? new Date(date.getTime()) : null;
     }    
-
-    /**
+    
+     /**
      * Prepare a phrase for a boolean search. In this function add the char 
      * '+' in front of every word in the parameter phrase. This way every 
      * world myst be preset in the results returned by the search.
@@ -53,7 +53,7 @@ public class DatabaseUtil {
      * @param phrase
      * @return
      */
-    public static String prepareForBooleanSearch(String phrase) {
+    public static String prepareForAndBooleanSearch(String phrase) {
         String booleanPhrase = "+";        
         int index = PrintingUtils.findNextChar(phrase, 0);
 
@@ -74,7 +74,19 @@ public class DatabaseUtil {
             }
         }
 
-        return booleanPhrase;        
+        return booleanPhrase;  
+    }
+
+    public static String escapeStrValue(String sqlValue) {
+        String escapedStr = new String();
+
+        // Escape char '
+        escapedStr = PrintingUtils.escapeCharacter(sqlValue, '\'', '\\');
+        
+        // Escape char "
+        escapedStr = PrintingUtils.escapeCharacter(escapedStr, '\"', '\\');
+
+        return escapedStr;
     }
 
     public static void close(Connection connection) {

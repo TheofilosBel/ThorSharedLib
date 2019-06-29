@@ -33,9 +33,6 @@ jar {
         attributes('Implementation-Title': project.name,
                    'Implementation-Version': project.version)
     }
-
-    // Add sources to jar.
-    from sourceSets.main.allSource
 }
 
 // Checks for the existance of GitHubAuthToken.
@@ -84,4 +81,8 @@ task showProperties {
         }
 
     } 
+}
+
+shadowJar {
+    from sourceSets.main.allSource
 }

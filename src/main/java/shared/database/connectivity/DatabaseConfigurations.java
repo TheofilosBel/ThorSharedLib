@@ -38,6 +38,20 @@ public class DatabaseConfigurations {
         }
     }
 
+    public DatabaseConfigurations(String schemaName, String userName, String password) {
+        this.schemaName = schemaName;
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public DatabaseConfigurations(String schemaName, String userName, String password, String host, String port) {
+        this.schemaName = schemaName;
+        this.userName = userName;
+        this.password = password;
+        this.hostName = host;
+        this.portNumber = port;
+    }
+
     /**
      * Returns the URL formated with the parameters hostName, portNumber, schemaName, useSSL
      */
