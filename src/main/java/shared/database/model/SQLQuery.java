@@ -147,8 +147,8 @@ public class SQLQuery {
         
         // Create a list containing all the where conditions.
         List<String> whereElements = new ArrayList<>();
-        whereElements.addAll(this.joinEquations);
-        whereElements.addAll(this.valueConstraints);
+        whereElements.addAll(this.joinEquations);        
+        whereElements.addAll(this.valueConstraints);        
         whereElements.addAll(this.inListConstraints);
 
         // Add where clause if it exists

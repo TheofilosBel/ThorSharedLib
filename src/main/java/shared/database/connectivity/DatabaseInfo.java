@@ -10,8 +10,9 @@ import shared.database.model.SQLQueries;
 import shared.database.connectivity.DataSourceFactory;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
-
+import java.util.HashSet;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -116,7 +117,20 @@ public class DatabaseInfo {
         // Add all the tables to the database.
         for (SQLTable table : tablesMap.values()) {
             this.database.addTable(table);
+
+            // Each table that has no primary keys will be forced 
+            // with a primary key matching to those columns with a MUL keyType
+            if (table.getPrimaryKey().isEmpty()) {
+                Set<SQLColumn> newPks = new HashSet<>();
+                for (SQLColumn col: table.getColumns())
+                    if (col.isPartOfMulIndex()) {
+                        newPks.add(col);
+                        col.addKey(SQLColumn.PK_IDENTIFIER);
+                    }
+                table.setPrimaryKey(newPks);
+            }
         }
+
     }
 
     // Uses the INFORMATION_SCHEMA to get the foreign key constraints of a database.
@@ -199,7 +213,7 @@ public class DatabaseInfo {
         }
     }
 
-        // Uses the INFORMATION_SCHEMA to get some statistics for the tables and the columns with a FULLTEXT index.
+    // Uses the INFORMATION_SCHEMA to get some statistics for the tables and the columns with a FULLTEXT index.
     private void getTableAndColumnStatistics() {        
         this.database.setName(this.schemaName);
 
@@ -231,15 +245,19 @@ public class DatabaseInfo {
 
             // This query returns the average length in words of all columns
             // with a FULLTEXT index in the current database schema.
-            stmt = con.prepareStatement(SQLQueries.COLUMN_AVERAGE_LENGTH_QUERY);
-            rs = stmt.executeQuery();
-
-            // Loop through every column and get its average length.
-            while (rs.next()) {
-                String tableName = rs.getString("TABLE_NAME");
-                String columnName = rs.getString("COLUMN_NAME");
-                double averageLength = rs.getDouble("AVG_LENGTH");
-                this.database.getTableByName(tableName).getColumnByName(columnName).setAverageLength(averageLength);
+            try {
+                stmt = con.prepareStatement(SQLQueries.COLUMN_AVERAGE_LENGTH_QUERY);
+                rs = stmt.executeQuery();
+    
+                // Loop through every column and get its average length.
+                while (rs.next()) {
+                    String tableName = rs.getString("TABLE_NAME");
+                    String columnName = rs.getString("COLUMN_NAME");
+                    double averageLength = rs.getDouble("AVG_LENGTH");
+                    this.database.getTableByName(tableName).getColumnByName(columnName).setAverageLength(averageLength);
+                }   
+            } catch (SQLException e) {
+                System.out.println("[INFO] Could not find an avg_length table in the database");
             }
         }
         catch (SQLException e) {
@@ -250,14 +268,15 @@ public class DatabaseInfo {
             DatabaseUtil.close(con, stmt, rs);
         }
 
-        for (SQLTable table : this.database.getTables()) {
-            System.out.println(table.getName() + " " + table.getRowsNum());
-            for (SQLColumn column : table.getColumns()) {
-                if (column.isIndexed()) {
-                    System.out.println("\t" + column.getName() + " " + column.getAverageLength());
-                }
-            }
-        }
+        // for (SQLTable table : this.database.getTables()) {
+        //     System.out.println(table.getName() + " " + table.getRowsNum());
+        //     for (SQLColumn column : table.getColumns()) {
+        //         if (column.isIndexed()) {
+        //             System.out.println("\t" + column.getName() + " " + column.getAverageLength());
+        //         }
+        //     }
+        // }
+
     }
 
     // Print the statistics

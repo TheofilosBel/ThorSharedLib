@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 
+import shared.util.PrintingUtils;
+
 import java.util.Date;
 
 public class DatabaseUtil {
@@ -68,6 +70,44 @@ public class DatabaseUtil {
         // return booleanPhrase;
         // return phrase;
         return "\"" + phrase + "\"";
+    }
+
+     /**
+     * Prepare a phrase for a boolean search. In this function add the char 
+     * '+' in front of every word in the parameter phrase. This way every 
+     * world myst be preset in the results returned by the search.
+     * 
+     * @param phrase
+     * @return
+     */
+    public static String prepareForAndBooleanSearch(String phrase) {
+        String booleanPhrase = "+";
+        phrase = phrase.trim();
+        for(int index = 0; index < phrase.length(); index++) {
+            // Get the char of the index position.
+            char c = phrase.charAt(index);
+
+            // Add the char to the boolean phrase
+            booleanPhrase += c;
+            
+            // Add a + sign in case of space
+            if (PrintingUtils.isWhiteSpace(c))
+                booleanPhrase += "+";                                     
+        }
+
+        return booleanPhrase;
+    }
+
+    public static String escapeStrValue(String sqlValue) {
+        String escapedStr = new String();
+
+        // Escape char '
+        escapedStr = PrintingUtils.escapeCharacter(sqlValue, '\'', '\\');
+        
+        // Escape char "
+        escapedStr = PrintingUtils.escapeCharacter(escapedStr, '\"', '\\');
+
+        return escapedStr;
     }
 
     public static void close(Connection connection) {
