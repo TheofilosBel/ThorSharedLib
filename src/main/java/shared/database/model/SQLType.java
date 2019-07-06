@@ -7,6 +7,7 @@ public class SQLType {
     private static String SQL_VARCHAR_STR = "varchar";
     private static String SQL_INT_STR = "int";
     private static String SQL_DOUBLE_STR = "double";
+    private static String SQL_FLOAT_STR = "float";
     
 
     // 2 Mock SQL types.
@@ -63,9 +64,17 @@ public class SQLType {
         return false;
     }
 
+    public boolean isFloat() {
+        if (this.type.contains(SQL_FLOAT_STR)) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Return true is type is arithmetic.
     public boolean isArithmetic() {
-        if (this.type.contains(SQL_INT_STR) || this.type.contains(SQL_DOUBLE_STR)) {
+        if (this.type.contains(SQL_INT_STR) || this.type.contains(SQL_DOUBLE_STR) || this.type.contains(SQL_FLOAT_STR)) {
             return true;
         }
 

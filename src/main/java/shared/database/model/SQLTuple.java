@@ -127,7 +127,15 @@ public class SQLTuple {
                 else if (column.getType().isInt()) {
                     this.values.add(new SQLIntValue(rs.getInt(index+1)));
                     this.attributes.add(column);
-                }                
+                }
+                else if (column.getType().isDouble()) {
+                    this.values.add(new SQLDoubleValue(rs.getDouble(index+1)));
+                    this.attributes.add(column);
+                }
+                else if (column.getType().isFloat()) {
+                    this.values.add(new SQLFloatValue(rs.getFloat(index+1)));
+                    this.attributes.add(column);
+                }
 
                 // Check if the column is part of the tuple's primary key.
                 if (column.isPrimary()) {
@@ -154,7 +162,15 @@ public class SQLTuple {
                 else if (column.getType().isInt()) {
                     this.values.add(new SQLIntValue(rs.getInt(index+1)));
                     this.attributes.add(column);
-                }                
+                }
+                else if (column.getType().isDouble()) {
+                    this.values.add(new SQLDoubleValue(rs.getDouble(index+1)));
+                    this.attributes.add(column);
+                }
+                else if (column.getType().isFloat()) {
+                    this.values.add(new SQLFloatValue(rs.getFloat(index+1)));
+                    this.attributes.add(column);
+                }               
 
                 // Check if the column is part of the tuple's primary key.
                 if (column.isPrimary()) {
