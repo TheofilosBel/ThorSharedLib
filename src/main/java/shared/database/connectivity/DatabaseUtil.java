@@ -60,16 +60,16 @@ public class DatabaseUtil {
         while(index < phrase.length()) {
             // Get the char of the index position.
             char c = phrase.charAt(index);
-
-            // Add the char to the boolean phrase
-            booleanPhrase += c;
-            
-            // Add a+ sign in case of space
+                        
+            // Add a + sign in case of white space
             if (PrintingUtils.isWhiteSpace(c)) {
-                booleanPhrase += "+";
                 index = PrintingUtils.findNextChar(phrase, index);
+                if (index <  phrase.length())
+                    booleanPhrase += " +";                
             }
             else {
+                // Add the char to the boolean phrase
+                booleanPhrase += c;
                 index++;
             }
         }

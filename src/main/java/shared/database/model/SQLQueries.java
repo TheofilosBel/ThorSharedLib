@@ -28,6 +28,10 @@ public class SQLQueries {
 
     // A Drop Table query for the TempTable.
     public static final String SQL_DROP_TABLES_QUERY = "DROP TABLE IF EXISTS %s";
+    
+    // A Drop View query
+    public static final String SQL_DROP_VIEWS_QUERY = "DROP VIEW IF EXISTS %s";
+    
 
     // Primary Key constraint for SQL Queries
     public final static String PRIMARY_KEY_CONSTRAINT = "PRIMARY KEY (%s)";
@@ -81,18 +85,23 @@ public class SQLQueries {
         "%s" + // The primary key        
         ")";
 
+    // CREATE VIEW query.
+    public final static String SQL_CREATE_VIEW_QUERY = 
+        "CREATE VIEW %s "+   // Here goes the view name
+        "AS %s \n";          // Here goes to select Query 
+
     // This query is executed against all indexes of the database
     // and returns all tuples of a relation in which the keyword was found.
-    public final static String INV_INDEX_QUERY = "SELECT %s FROM %s WHERE match(%s) against(? IN BOOLEAN MODE) LIMIT 0, 2000";
+    public final static String INV_INDEX_QUERY = "SELECT %s FROM %s WHERE match(%s) against(? IN BOOLEAN MODE)";
 
     // This query searches for a value in a specific column 
     // with the use of LIKE "%<value>%".
     public final static String LIKE_QUERY = "SELECT %s FROM %s WHERE %s LIKE ? LIMIT 0, 2000";
 
     // This query searches for values that are in a specific numeric column
-    // but also restricted by an operator and a number (except limit 0,5).
-    
+    // but also restricted by an operator and a number (except limit 0,5).    
     public final static String NUMERIC_QUERY = "SELECT %s FROM %s WHERE %s %s ? LIMIT 0, 5"; 
+
     // Query to get information about all columns.
     public static final String INFORMATION_SCHEMA_COLUMNS_QUERY =
     "SELECT COLUMN_NAME, TABLE_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY " +

@@ -279,7 +279,7 @@ public class SQLTuple {
                 " "
             );
         }
-        rowOfValues += "|";
+        rowOfValues = rowOfValues.replace("\n", " ") + "|";
         str += rowOfValues + "\n" + separationLine;
 
         return str;
