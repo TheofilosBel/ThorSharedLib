@@ -110,8 +110,13 @@ public class SQLQuery {
         // Create a list containing all the where conditions.
         List<String> whereElements = new ArrayList<>();
         whereElements.addAll(this.joinEquations);
-        whereElements.addAll(this.valueConstraints);        
-
+        whereElements.addAll(this.valueConstraints);
+        
+        // If there are in list constraints carefully add them by removies the ids
+        for (String inListConst: this.inListConstraints) {
+            whereElements.add(inListConst.substring(0, inListConst.indexOf("IN (") + 4) + " ... )");
+        }
+        
         // Add where clause if it exists
         if (!whereElements.isEmpty()) {
             query += "\n" + String.format(

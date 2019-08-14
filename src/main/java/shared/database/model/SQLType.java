@@ -4,10 +4,12 @@ public class SQLType {
 
     // The SQL Types in String format.
     private static String SQL_TEXT_STR = "text";
+    private static String SQL_LONGTXT_STR = "longtext";
     private static String SQL_VARCHAR_STR = "varchar";
     private static String SQL_INT_STR = "int";
     private static String SQL_DOUBLE_STR = "double";
     private static String SQL_FLOAT_STR = "float";
+
     
 
     // 2 Mock SQL types.
@@ -41,6 +43,14 @@ public class SQLType {
     // Returns true if type is text-like.
     public boolean isTextual() {
         if (this.type.contains(SQL_VARCHAR_STR) || this.type.contains(SQL_TEXT_STR)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isLongText() {
+        if (this.type.contains(SQL_LONGTXT_STR)) {
             return true;
         }
 
@@ -94,7 +104,7 @@ public class SQLType {
 
     @Override
     public String toString() {
-        return this.type + ((this.isTextual()) ? ("(" + this.maximumLength.toString() + ")") : (""));
+        return this.type + ((this.isTextual() && !this.isLongText()) ? ("(" + this.maximumLength.toString() + ")") : (""));
     }
 
 }

@@ -84,6 +84,8 @@ public class DatabaseInfo {
                 if (tableName.equals("avg_length")) { continue; }
                 if (tableName.equals("size")) { continue; }
                 if (tableName.equals("history")) { continue; }
+                if (tableName.contains("soda")) { continue; }
+
 
                 // If an SQLTable with the same name exists, just add the column.
                 if (tablesMap.containsKey(tableName)) {
@@ -239,6 +241,8 @@ public class DatabaseInfo {
                 if (tableName.equals("avg_length")) { continue; }
                 if (tableName.equals("size")) { continue; }
                 if (tableName.equals("history")) { continue; }
+                if (tableName.contains("soda")) { continue; }
+
 
                 this.database.getTableByName(tableName).setRowsNum(tableRows);
             }

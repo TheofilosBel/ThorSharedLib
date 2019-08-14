@@ -20,7 +20,7 @@ public class Stopwords {
 
 	public static String removeStopWords(String string) {
 		String result = "";
-        String[] words = string.split("\\s+");
+        String[] words = string.toLowerCase().split("\\s+");
 
         for (String word : words) {
             if (word.isEmpty()) continue;

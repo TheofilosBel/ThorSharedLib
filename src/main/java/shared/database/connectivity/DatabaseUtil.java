@@ -7,6 +7,7 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 
 import shared.util.PrintingUtils;
+import shared.util.Stopwords;
 
 import java.util.Date;
 
@@ -54,6 +55,9 @@ public class DatabaseUtil {
      * @return
      */
     public static String prepareForAndBooleanSearch(String phrase) {
+        // First remove the stopwords from the search phrase (messes up SQL inv idx query)
+        phrase = Stopwords.removeStopWords(phrase);
+        
         String booleanPhrase = "+";        
         int index = PrintingUtils.findNextChar(phrase, 0);
 
