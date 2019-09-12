@@ -54,10 +54,7 @@ public class DatabaseUtil {
      * @param phrase
      * @return
      */
-    public static String prepareForAndBooleanSearch(String phrase) {
-        // First remove the stopwords from the search phrase (messes up SQL inv idx query)
-        phrase = Stopwords.removeStopWords(phrase);
-        
+    public static String prepareForAndBooleanSearch(String phrase) {        
         String booleanPhrase = "+";        
         int index = PrintingUtils.findNextChar(phrase, 0);
 
@@ -83,6 +80,9 @@ public class DatabaseUtil {
 
     public static String escapeStrValue(String sqlValue) {
         String escapedStr = new String();
+
+        // Escape char \
+        escapedStr = PrintingUtils.escapeCharacter(sqlValue, '\\', '\\');
 
         // Escape char '
         escapedStr = PrintingUtils.escapeCharacter(sqlValue, '\'', '\\');
