@@ -23,6 +23,13 @@ public class Table {
             this.columnValues = values;
         }
 
+        public Row(String... values) {
+            this.columnValues = new ArrayList<>();
+            for (String s: values)
+                this.columnValues.add(s);
+
+        }
+
         /**
          * @return The values of the row.
          */
@@ -67,6 +74,9 @@ public class Table {
         this.title = null;
         this.columnTitles = columnTitles;
         this.rows = rows;
+
+        if (columnTitles.size() != rows.size())
+            throw new IllegalArgumentException("Table's column names and rows have different sizes");
     }
 
     /** 
@@ -78,6 +88,9 @@ public class Table {
         this.title = title;
         this.columnTitles = columnTitles;
         this.rows = rows;
+
+        if (columnTitles.size() != rows.size())
+            throw new IllegalArgumentException("Table's column names and rows have different sizes");
     }
 
     /**

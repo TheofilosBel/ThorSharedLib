@@ -12,9 +12,10 @@ import shared.database.model.SQLForeignKeyConstraint;
 import shared.database.model.SQLTable;
 import shared.util.Graph;
 import shared.util.Pair;
+import shared.util.Graph.NoLabel;
 
 // This class models an ORM graph.
-public class ORMSchemaGraph extends Graph<ORMNode> {
+public class ORMSchemaGraph extends Graph<ORMNode, NoLabel> {
     private static final Logger LOGGER = Logger.getLogger(ORMSchemaGraph.class.getName());
 
     private HashMap<String,ORMNode> tableToNodeMap;                             // A Mapping between relation's Names and the ORMNodes we created for them.
@@ -182,7 +183,7 @@ public class ORMSchemaGraph extends Graph<ORMNode> {
         int distance = 0;
 
         // Get The Patch connecting those two nodes.        
-        Graph<ORMNode> path = this.getPathConnecting2Nodes(nodeA, nodeB);
+        Graph<ORMNode, NoLabel> path = this.getPathConnecting2Nodes(nodeA, nodeB);
         for (ORMNode node: path.getVertexes())
             if (node.isObjectNode() || node.isMixedNode())
                 distance++;

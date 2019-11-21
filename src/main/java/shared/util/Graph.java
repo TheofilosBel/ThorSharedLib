@@ -11,22 +11,33 @@ import java.util.Set;
 // This class models a generic graph data structure.
 // We represent the graph with a adjacency list. The graph
 // nodes contain T data that are unique.
-public class Graph<V> {
+public class Graph<V,L> {
+
+    // Represents an empty label.
+    public static class NoLabel {}
 
     // Models a graph Edge.
     public class Edge {
         private V startNode;
         private V endNode;
+        private L label;
 
-        // Public Constructor.
         public Edge(V startNode, V endNode) {
             this.startNode = startNode;
             this.endNode = endNode;
+            this.label = null;
+        }
+        
+        public Edge(V startNode, V endNode, L label) {
+            this.startNode = startNode;
+            this.endNode = endNode;
+            this.label = label;
         }
 
         // Getters.
         public V getStartNode() { return this.startNode; }
         public V getEndNode() { return this.endNode; }
+        public L getLabel() { return this.label; }
 
         // Returns true if it contains the parameter node.
         public boolean containsNode(V node) {
@@ -95,7 +106,7 @@ public class Graph<V> {
     }
 
     // Clone Vertexes from parameter Graph. Shallow cloning the nodes.
-    public void cloneVertexes(Graph<V> graph) {
+    public void cloneVertexes(Graph<V,L> graph) {
         // Clone the adjacencyList
         for (ListNode node: graph.adjacencyList) {            
             ListNode clonedNode = new ListNode(node.data);
@@ -111,7 +122,7 @@ public class Graph<V> {
      * @param graphToClone graph to clone
      * @param fillDataToClonedData a maps between param graph's data and this graph's cloned data. if its not null fill it.
      */    
-    public void cloneLikeGraph(Graph<V> graphToClone, HashMap<V, V> fillDataToClonedData) {        
+    public void cloneLikeGraph(Graph<V,L> graphToClone, HashMap<V, V> fillDataToClonedData) {        
         HashMap<ListNode, ListNode> oldToNewNodes = new HashMap<>();  // Map cloned nodes to nodes.
  
         // First clone all the nodes keeping the mapping between clonedNodes and this nodes.
@@ -262,6 +273,41 @@ public class Graph<V> {
                endNode.addOutGoingConnection(startNode) && startNode.addInComingConnection(endNode);
     }
 
+     // Add a connection between two nodes.
+     public boolean addDirEdge(V startNodeData, V endNodeData, L label) {
+        ListNode startNode = this.getNode(startNodeData);
+        ListNode endNode = this.getNode(endNodeData);
+
+        // Check if nodes dont exist.
+        if (startNode == null || endNode == null) return false;
+
+        // Create an edge and add it to the edge list.
+        this.edgesList.add(new Edge(startNodeData, endNodeData, label));
+        
+        // Connect The nodes of the adjacency List.
+        return startNode.addOutGoingConnection(endNode) &&
+               endNode.addInComingConnection(startNode);
+    }
+
+    // Add a connection between two nodes.
+    public boolean addUnDirEdge(V startNodeData, V endNodeData, L label) {
+        ListNode startNode = this.getNode(startNodeData);
+        ListNode endNode = this.getNode(endNodeData);
+
+        // Check if nodes dont exist.
+        if (startNode == null || endNode == null) {            
+            return false;
+        }
+
+        // Create two edges and add them to the edge list.
+        this.edgesList.add(new Edge(startNodeData, endNodeData, label));
+        this.edgesList.add(new Edge(endNodeData, startNodeData, label));
+
+        // Add a undirected Edge between startNode and endNode.
+        return startNode.addOutGoingConnection(endNode) && endNode.addInComingConnection(startNode) &&
+               endNode.addOutGoingConnection(startNode) && startNode.addInComingConnection(endNode);
+    }
+
 
     // Returns a list of all the data contained in the graph.
     public List<V> getVertexes() {
@@ -288,7 +334,7 @@ public class Graph<V> {
      * @return returns the distance of the above nodes.
      */
     public int getPathDistance(V startDataNode, V endDataNode) {
-        Graph<V> path = this.getPathConnecting2Nodes(startDataNode, endDataNode);
+        Graph<V,L> path = this.getPathConnecting2Nodes(startDataNode, endDataNode);
 
         // If there is no path connecting them return MAX distance.
         if (path == null)
@@ -300,7 +346,7 @@ public class Graph<V> {
 
 
     // Returns a the path connecting two DataNodes. The path is returned in graph format.
-    public Graph<V> getPathConnecting2Nodes(V startDataNode, V endDataNode) {
+    public Graph<V,L> getPathConnecting2Nodes(V startDataNode, V endDataNode) {
         // Create a List containing those two nodes.
         Set<V> containedData = new HashSet<>();
         containedData.add(startDataNode);
@@ -311,7 +357,7 @@ public class Graph<V> {
     }
 
 
-    // Check nodes before subgprah
+    // Check nodes before sub graph
     public boolean checkNodesForSubGraph(Set<V> containedData) {
         // Each node must be in the graph and each node must have
         // at least one incoming edge or outgoing connection.
@@ -330,8 +376,8 @@ public class Graph<V> {
 
 
     // Returns a subGraph of the this Graph Containing the list of nodes passed as a parameter.
-    public Graph<V> subGraph(Set<V> containedData) {                
-        Graph<V> subGraph = new Graph<V>();                   // The subGraph.
+    public Graph<V,L> subGraph(Set<V> containedData) {                
+        Graph<V,L> subGraph = new Graph<V,L>();                   // The subGraph.
         Set<V> unInsertedData = new HashSet<>(containedData); // A Set holding the Data not yet in the SUB-GRAPH. 
         List<ListNode> nodesToExpand = new ArrayList<>();     // A List holding the ListNodes of the GRAPH that we will expand.
         List<ListNode> finalNodes = new ArrayList<>();        // A final node is a node with no outGoing Edges. This list stores final SUB-GRAPH nodes.
@@ -467,7 +513,7 @@ public class Graph<V> {
         String str = "_Graph_\n";
 
         // Print each node of the list.
-        for (Graph<V>.ListNode node : this.adjacencyList) {
+        for (Graph<V,L>.ListNode node : this.adjacencyList) {
            str += node.toString();
         }
 

@@ -16,13 +16,15 @@ import com.google.gson.Gson;
  */
 public class Response<R extends ResultInterface> {
 
-    private String id; // The id of the system (the name in lowercase and without spaces).
-    private String name; // The name of the system.
-    private Architecture architecture; // The architecture of the system.
-    private List<ComponentTime> componentsTime; // Saves the time taken by every component of the system.
-    private List<ComponentStats> componentStats; // Saves the statistics of every component of the system
-    private double totalTime; // The total running time of the system.
-    private List<Result<R>> results; // The top results returned by the system.
+    private String id;                                 // The id of the system (the name in lowercase and without spaces).
+    private String name;                               // The name of the system.
+    private Architecture architecture;                 // The architecture of the system.
+    private GeneralArchitecture generalArchitecture;   // The general architecture proposed by our paper. 
+    private List<ComponentTime> componentsTime;        // Saves the time taken by every component of the system.
+    private List<ComponentStats> componentStats;       // Saves the statistics of every component of the system
+    private double totalTime;                          // The total running time of the system.
+    private List<Result<R>> results;                   // The top results returned by the system.
+
 
     /**
      * Constructor.
@@ -129,6 +131,13 @@ public class Response<R extends ResultInterface> {
      */
     public List<ComponentStats> getcomponentStats() {
         return componentStats;
+    }
+
+    /**
+     * @return the generalArchitecture
+     */
+    public GeneralArchitecture getGeneralArchitecture() {
+        return generalArchitecture;
     }
 
     /**

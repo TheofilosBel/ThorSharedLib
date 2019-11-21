@@ -1,8 +1,5 @@
 package shared.util;
 
-
-import java.util.List;
-
 public class Triplet<D1, D2, D3> {
 
     private D1 first;

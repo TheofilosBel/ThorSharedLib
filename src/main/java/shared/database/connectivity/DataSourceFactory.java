@@ -1,11 +1,7 @@
 package shared.database.connectivity;
 
-import shared.database.config.PropertiesSingleton;
-
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -17,7 +13,7 @@ import org.apache.commons.dbcp.BasicDataSource;
  */
 public class DataSourceFactory {    
     private static final Logger LOGGER = Logger.getLogger(DataSourceFactory.class.getName());  // The LOGGER
-    private static BasicDataSource ds = null;                                 // The DataSource Object
+    private static BasicDataSource ds = null;                                                  // The DataSource Object
         
     /**
      * Loads tha database configurations         
@@ -35,7 +31,7 @@ public class DataSourceFactory {
             ds.setMaxOpenPreparedStatements(100);
         }
         else {        
-            System.err.println("[ERR] Configuration Object not assigned");
+            LOGGER.info("[ERR] Configuration Object not assigned");
         } 
     }    
 

@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.util.Timer;
+import shared.util.Timer.Type;
+
 /**
  * This class represents a component and stores information (related to the component)
  * which will be displayed in the front end.
@@ -12,10 +15,11 @@ public class Component {
 
     private static Integer COMPONENT_COUNT = 0;
 
-    private Integer id; // The id of the component.
-    private String name; // The name of the component.
-    private Double time; // The execution time of the component.
-    private List<Table> componentInfo; // The information of the component.
+    private Integer id;    // The id of the component.
+    private String name;   // The name of the component.
+    private Double time;   // The execution time of the component.
+    private Timer timer;   // The timer used to count the components elapsed time.
+    private List<Table> componentInfo;  // The information of the component.
 
     // A list of components that are connected with the current one in the
     // system's directed architecture graph and their corresponding labels.
@@ -35,6 +39,7 @@ public class Component {
         this.outGoingConnections = new ArrayList<>();
         this.outGoingLabels = new ArrayList<>();
         this.time = 0D;
+        this.timer = new Timer(Type.WALL_CLOCK_TIME);
     }
 
     /**
@@ -106,6 +111,20 @@ public class Component {
         // Format the time (round to 2 decimal points).
         DecimalFormat df = new DecimalFormat("#0.##");
         this.time = Double.valueOf(df.format(time));
+    }
+
+    /**
+     * Starts the Timer, used to measure the components execution time.
+     */
+    public void startTimer(){
+        this.timer.start();
+    }
+
+    /**
+     * Stops the Timer, used to measure the components execution time.
+     */
+    public void stopTimer(){
+        this.time = this.timer.stop();
     }
 
     /**

@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.sql.DataSource;
 
 import shared.util.PrintingUtils;
-import shared.util.Stopwords;
 
 import java.util.Date;
 

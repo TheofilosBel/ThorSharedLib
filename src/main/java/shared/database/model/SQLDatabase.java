@@ -1,10 +1,8 @@
 package shared.database .model;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
 
 // This class models a SQL database.
 public class SQLDatabase {
