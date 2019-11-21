@@ -1,6 +1,8 @@
 package shared.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 // A class with static functions. The functions
 // do procedures helpful in printing.
@@ -126,6 +128,47 @@ public class PrintingUtils {
     // Returns true if char is a white space char.
     public static boolean isWhiteSpace(char c) {
         return c == ' ' || c == '\t' || c == '\n';
+    }
+
+
+    // Tokenizes the input string based on whitespace.
+    public static List<String> whitespaceTokenizer(String query) {
+        // The list of Strings to be returned. Initially empty.
+        List<String> Strings = new ArrayList<>();
+
+        // Loop all the strings chars
+        int beginIndex = 0;
+        boolean quoteOpened = false;
+        for(int index = 0; index < query.length();) {
+            // Get the char of the index position.
+            char c = query.charAt(index);
+            
+            // Depending on the char handle the subStrings.
+            if (c == ' ' && !quoteOpened) {
+                Strings.add(new String(query.substring(beginIndex, index))); // Create the subString till this index.
+                index = findNextChar(query, index);               // Skip all the white chars for index.
+                beginIndex = index;                               // Initialize the beginIndex for next subString.                
+            }
+            else if (c == '\"' && quoteOpened) {
+                Strings.add(new String(query.substring(beginIndex, index))); // Create the subString till this index.
+                index = findNextChar(query, index + 1);           // Skip all the white chars for index.
+                beginIndex = index;                               // Initialize the beginIndex for next subString.
+                quoteOpened = false;                              // The quote closed.
+            }
+            else if (c == '\"' && !quoteOpened) {
+                beginIndex = ++index;  // Initialize the beginIndex for next quoted subString. 
+                quoteOpened = true;    // Note that a quote Opened.
+            }
+            else if (index == query.length() - 1) {                
+                Strings.add(new String(query.substring(beginIndex)));  // Create the final subString.
+                break;
+            } 
+            else {
+                index++;  // If c is not a special char, just increment the index.
+            }
+        }
+
+        return Strings;
     }
     
 }
