@@ -23,21 +23,21 @@ import java.sql.SQLException;
 public class DatabaseInfo {
 
     // Gets all the information needed from the database.
-    public SQLDatabase getDatabaseObject(String databaseName) {
+    public static SQLDatabase getDatabaseObject(String databaseName) {
         SQLDatabase database = new SQLDatabase();
         database.setName(databaseName);
 
-        this.getTableAndColumnNames(database);
-        this.getFKConstraints(database);
-        this.getIndexedColumns(database);
-        this.getTableAndColumnStatistics(database);
+        getTableAndColumnNames(database);
+        getFKConstraints(database);
+        getIndexedColumns(database);
+        getTableAndColumnStatistics(database);
 
         return database;
     }
 
     // Uses the INFORMATION_SCHEMA to get the tables and columns of a database.
     // Saves the information in the requested database object.
-    private void getTableAndColumnNames(SQLDatabase database) {
+    private static void getTableAndColumnNames(SQLDatabase database) {
         // A hash map that maps table names to SQLTable objects.
         Map<String, SQLTable> tablesMap = new HashMap<String, SQLTable>();
 
@@ -117,7 +117,7 @@ public class DatabaseInfo {
 
     // Uses the INFORMATION_SCHEMA to get the foreign key constraints of a database.
     // Saves the information in the requested database object.
-    private void getFKConstraints(SQLDatabase database) {        
+    private static void getFKConstraints(SQLDatabase database) {        
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -159,7 +159,7 @@ public class DatabaseInfo {
     }
 
     // Uses the INFORMATION_SCHEMA to get the columns which are indexed with a 'FULLTEXT' index.
-    private void getIndexedColumns(SQLDatabase database) {
+    private static void getIndexedColumns(SQLDatabase database) {
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -190,7 +190,7 @@ public class DatabaseInfo {
     }
 
     // Uses the INFORMATION_SCHEMA to get some statistics for the tables and the columns with a FULLTEXT index.
-    private void getTableAndColumnStatistics(SQLDatabase database) {        
+    private static void getTableAndColumnStatistics(SQLDatabase database) {        
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
