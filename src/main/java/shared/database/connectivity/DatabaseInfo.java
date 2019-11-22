@@ -3,7 +3,6 @@ package shared.database.connectivity;
 import shared.database.model.SQLDatabase;
 import shared.database.model.SQLTable;
 import shared.database.model.SQLType;
-import shared.util.Timer;
 import shared.database.model.SQLColumn;
 import shared.database.model.SQLForeignKeyConstraint;
 import shared.database.model.SQLQueries;
@@ -23,41 +22,22 @@ import java.sql.SQLException;
 // It queries the INFORMATION_SCHEMA table.
 public class DatabaseInfo {
 
-    private SQLDatabase database;  // A database object.
-    private String schemaName;     // The schema name.
-
-    // Statistics
-    private Double timeGettingInfo;
-
-
-    public DatabaseInfo(String name) {
-        this.database = new SQLDatabase();
-        this.schemaName = name;
-    }
-
-    public SQLDatabase getDatabase() {
-        return this.database;
-    }
-
     // Gets all the information needed from the database.
-    public void getDatabaseInfo() {
-        Timer timer = new Timer();
-        timer.start(); // Start the timer
-        
-        this.getTableAndColumnNames();
-        this.getFKConstraints();
-        this.getIndexedColumns();
-        this.getTableAndColumnStatistics(); 
-        
-        this.timeGettingInfo = timer.stop(); // Stop the timer.
+    public SQLDatabase getDatabaseObject(String databaseName) {
+        SQLDatabase database = new SQLDatabase();
+        database.setName(databaseName);
+
+        this.getTableAndColumnNames(database);
+        this.getFKConstraints(database);
+        this.getIndexedColumns(database);
+        this.getTableAndColumnStatistics(database);
+
+        return database;
     }
 
     // Uses the INFORMATION_SCHEMA to get the tables and columns of a database.
     // Saves the information in the requested database object.
-    private void getTableAndColumnNames() {        
-        // Get the database name from the properties bundle.        
-        this.database.setName(this.schemaName);
-
+    private void getTableAndColumnNames(SQLDatabase database) {
         // A hash map that maps table names to SQLTable objects.
         Map<String, SQLTable> tablesMap = new HashMap<String, SQLTable>();
 
@@ -70,7 +50,7 @@ public class DatabaseInfo {
             // From the information of the columns we will extract the table names, too.
             con = DataSourceFactory.getConnection();
             stmt = con.prepareStatement(SQLQueries.INFORMATION_SCHEMA_COLUMNS_QUERY);
-            stmt.setString(1, this.database.getName());
+            stmt.setString(1, database.getName());
             rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -118,7 +98,7 @@ public class DatabaseInfo {
 
         // Add all the tables to the database.
         for (SQLTable table : tablesMap.values()) {
-            this.database.addTable(table);
+            database.addTable(table);
 
             // Each table that has no primary keys will be forced 
             // with a primary key matching to those columns with a MUL keyType
@@ -137,10 +117,7 @@ public class DatabaseInfo {
 
     // Uses the INFORMATION_SCHEMA to get the foreign key constraints of a database.
     // Saves the information in the requested database object.
-    private void getFKConstraints() {
-        // Get the Schema name from the properties bundle.        
-        this.database.setName(this.schemaName);
-
+    private void getFKConstraints(SQLDatabase database) {        
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -149,7 +126,7 @@ public class DatabaseInfo {
             // This query returns all the foreign key constraints in the schema.
             con = DataSourceFactory.getConnection();
             stmt = con.prepareStatement(SQLQueries.INFORMATION_SCHEMA_KEY_USAGE_QUERY);
-            stmt.setString(1, this.database.getName());
+            stmt.setString(1, database.getName());
             rs = stmt.executeQuery();
 
             // Loop through every constraint.
@@ -162,14 +139,14 @@ public class DatabaseInfo {
                 // Create a foreign key constraint and add it to the
                 // database's list of foreign key constraints.
                 SQLForeignKeyConstraint constraint = new SQLForeignKeyConstraint();
-                constraint.fill(this.database, tableName, columnName, referencedTableName, referencedColumnName);
-                this.database.addFKConstraint(constraint);
+                constraint.fill(database, tableName, columnName, referencedTableName, referencedColumnName);
+                database.addFKConstraint(constraint);
 
                 // Also Add the column and the constrain in the Tables involving in the constrain.
-                this.database.getTableByName(tableName).getColumnByName(columnName).addKey(SQLColumn.FK_IDENTIFIER);
-                this.database.getTableByName(tableName).addForeignKey(this.database.getTableByName(tableName).getColumnByName(columnName));
-                this.database.getTableByName(tableName).addReferencingForeignKeyConstrain(constraint);
-                this.database.getTableByName(referencedTableName).addReferencedForeignKeyConstrain(constraint);
+                database.getTableByName(tableName).getColumnByName(columnName).addKey(SQLColumn.FK_IDENTIFIER);
+                database.getTableByName(tableName).addForeignKey(database.getTableByName(tableName).getColumnByName(columnName));
+                database.getTableByName(tableName).addReferencingForeignKeyConstrain(constraint);
+                database.getTableByName(referencedTableName).addReferencedForeignKeyConstrain(constraint);
             }
         }
         catch (SQLException e) {
@@ -182,10 +159,7 @@ public class DatabaseInfo {
     }
 
     // Uses the INFORMATION_SCHEMA to get the columns which are indexed with a 'FULLTEXT' index.
-    private void getIndexedColumns() {        
-        // Get the database name from the properties bundle.        
-        this.database.setName(this.schemaName);
-
+    private void getIndexedColumns(SQLDatabase database) {
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -194,7 +168,7 @@ public class DatabaseInfo {
             // This query returns all the columns indexed with a FULLTEXT index.
             con = DataSourceFactory.getConnection();
             stmt = con.prepareStatement(SQLQueries.INFORMATION_SCHEMA_STATISTICS_QUERY);
-            stmt.setString(1, this.database.getName());
+            stmt.setString(1, database.getName());
             rs = stmt.executeQuery();
 
             // Loop through every column.
@@ -203,7 +177,7 @@ public class DatabaseInfo {
                 String columnName = rs.getString("COLUMN_NAME");
 
                 // Search the column in the database and mark it as indexed.
-                this.database.getTableByName(tableName).getColumnByName(columnName).setIsIndexed(true);
+                database.getTableByName(tableName).getColumnByName(columnName).setIsIndexed(true);
             }
         }
         catch (SQLException e) {
@@ -216,9 +190,7 @@ public class DatabaseInfo {
     }
 
     // Uses the INFORMATION_SCHEMA to get some statistics for the tables and the columns with a FULLTEXT index.
-    private void getTableAndColumnStatistics() {        
-        this.database.setName(this.schemaName);
-
+    private void getTableAndColumnStatistics(SQLDatabase database) {        
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -229,7 +201,7 @@ public class DatabaseInfo {
 
             // This query returns the number of rows of all tables in the schema.            
             stmt = con.prepareStatement(SQLQueries.INFORMATION_SCHEMA_TABLE_ROWS_QUERY);
-            stmt.setString(1, this.database.getName());
+            stmt.setString(1, database.getName());
             rs = stmt.executeQuery();
 
             // Loop through every table and save its number of rows.
@@ -244,7 +216,7 @@ public class DatabaseInfo {
                 if (tableName.contains("soda")) { continue; }
 
 
-                this.database.getTableByName(tableName).setRowsNum(tableRows);
+                database.getTableByName(tableName).setRowsNum(tableRows);
             }
 
             // This query returns the average length in words of all columns
@@ -258,7 +230,7 @@ public class DatabaseInfo {
                     String tableName = rs.getString("TABLE_NAME");
                     String columnName = rs.getString("COLUMN_NAME");
                     double averageLength = rs.getDouble("AVG_LENGTH");
-                    this.database.getTableByName(tableName).getColumnByName(columnName).setAverageLength(averageLength);
+                    database.getTableByName(tableName).getColumnByName(columnName).setAverageLength(averageLength);
                 }   
             } catch (SQLException e) {
                 System.out.println("[INFO] Could not find an avg_length table in the database");
@@ -271,21 +243,5 @@ public class DatabaseInfo {
             // Close the connection
             DatabaseUtil.close(con, stmt, rs);
         }
-
-        // for (SQLTable table : this.database.getTables()) {
-        //     System.out.println(table.getName() + " " + table.getRowsNum());
-        //     for (SQLColumn column : table.getColumns()) {
-        //         if (column.isIndexed()) {
-        //             System.out.println("\t" + column.getName() + " " + column.getAverageLength());
-        //         }
-        //     }
-        // }
-
-    }
-
-    // Print the statistics
-    public void printStats() {
-        System.out.println("DATABASE INFO STATS:");
-        System.out.println("\tTime to get Info: " + this.timeGettingInfo);
-    }
+    }    
 }

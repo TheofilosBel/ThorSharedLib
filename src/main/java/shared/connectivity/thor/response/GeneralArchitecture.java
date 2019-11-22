@@ -8,7 +8,7 @@ package shared.connectivity.thor.response;
  *  - SQL Translator & Executor: Translates the above interpretations in SQL queries and executes them against an RDBMS.
  * 
  *  Each of the above outputs a number of structures, by setting the information bellow THOR 
-*   will be able to display and compare the database search System equally:
+ *   will be able to display and compare the database search System equally:
  *  - Parser outputs different (or even one) possible Parses (like parse Trees). Set the number of parses.
  *  - Entity Mapper outputs Database Mappings per Term found in the user query. Set the average number of columns where keyword were found.
  *  - Interpretation Generator outputs structured representation of the query from the System/Db perspective, capturing joins/filters/... . Set the number of those representations
