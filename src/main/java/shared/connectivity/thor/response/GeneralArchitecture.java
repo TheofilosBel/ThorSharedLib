@@ -21,67 +21,67 @@ public class GeneralArchitecture {
     // public Component irGenerator = new Component("Interpretation Generator");
     // public Component sqlTransAndExec = new Component("SQL Translator & Executor");
 
-    private Double numOfParses;
-    private Double numOfMappings;
-    private Double numOfInterpretations;
-    private Double numOfSQLQueries;
+    private Double parserOutput;
+    private Double entityMapperOutput;
+    private Double interpretationGeneratorOutput;
+    private Double translatorAndExecutorOutput;
     
 
 
     /**
-     * @param numOfParses the numOfParses to set
+     * @param parserOutput the parserOutput to set
      */
-    public void setNumOfParses(Double numOfParses) {
-        this.numOfParses = numOfParses;
+    public void setParserOutput(Double parserOutput) {
+        this.parserOutput = parserOutput;
     }
 
     /**
-     * @return the numOfParses
+     * @return the ParserOutput
      */
-    public Double getNumOfParses() {
-        return numOfParses;
+    public Double getParserOutput() {
+        return parserOutput;
     }
 
     /**
-     * @param numOfInterpretations the numOfInterpretations to set
+     * @param entityMapperOutput the entityMapperOutput to set
      */
-    public void setNumOfInterpretations(Double numOfInterpretations) {
-        this.numOfInterpretations = numOfInterpretations;
+    public void setEntityMapperOutput(Double entityMapperOutput) {
+        this.entityMapperOutput = entityMapperOutput;
     }
 
     /**
-     * @return the numOfInterpretations
+     * @return the entityMapperOutput
      */
-    public Double getNumOfInterpretations() {
-        return numOfInterpretations;
+    public Double getEntityMapperOutput() {
+        return entityMapperOutput;
     }
 
     /**
-     * @param numOfMappings the numOfMappings to set
+     * @param interpretationGeneratorOutput the interpretationGeneratorOutput to set
      */
-    public void setNumOfMappings(Double numOfMappings) {
-        this.numOfMappings = numOfMappings;
+    public void setInterpretationGeneratorOutput(Double interpretationGeneratorOutput) {
+        this.interpretationGeneratorOutput = interpretationGeneratorOutput;
     }
 
     /**
-     * @return the numOfMappings
+     * @return the interpretationGeneratorOutput
      */
-    public Double getNumOfMappings() {
-        return numOfMappings;
+    public Double getInterpretationGeneratorOutput() {
+        return interpretationGeneratorOutput;
     }
 
 
     /**
-     * @param numOfSQLQueries the numOfSQLQueries to set
+     * @param translatorAndExecutorOutput the translatorAndExecutorOutput to set
      */
-    public void setNumOfSQLQueries(Double numOfSQLQueries) {
-        this.numOfSQLQueries = numOfSQLQueries;
+    public void setTranslatorAndExecutorOutput(Double translatorAndExecutorOutput) {
+        this.translatorAndExecutorOutput = translatorAndExecutorOutput;
     }
 
     /**
-     * @return the numOfSQLQueries
+     * @return the translatorAndExecutorOutput
      */
-    public Double getNumOfSQLQueries() {
-        return numOfSQLQueries;
+    public Double getTranslatorAndExecutorOutput() {
+        return translatorAndExecutorOutput;
     }
 }

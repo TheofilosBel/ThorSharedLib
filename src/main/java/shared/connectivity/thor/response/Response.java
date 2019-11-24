@@ -29,9 +29,10 @@ public class Response<R extends ResultInterface> {
     /**
      * Constructor.
      */
-    public Response(String id, String name, List<Component> components, List<R> topResults) {
+    public Response(String id, String name,GeneralArchitecture genArch, List<Component> components, List<R> topResults) {
         this.id = id;
-        this.name = name;        
+        this.name = name;
+        this.generalArchitecture = genArch;
         this.componentsTime = new ArrayList<>();
         this.componentStats = new ArrayList<>();
         this.totalTime = 0.0;

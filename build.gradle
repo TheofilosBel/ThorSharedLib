@@ -52,9 +52,9 @@ task("checkGhAuthProperty") {
 // The GitHub Release Task
 githubRelease {    
     token "$GitHubAuthToken" // This is your personal access token with Repo permissions
-                        // You get this from your user settings > developer settings
-                        // If this value is not set, a login dialog will prompt you for your credentials.
-                        // 2fa is not supported
+                             // You get this from your user settings > developer settings
+                             // If this value is not set, a login dialog will prompt you for your credentials.
+                             // 2fa is not supported
     owner "TheofilosBel"          // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
     repo "ThorSharedLib"          // by default this is set to your project name
     tagName "v${project.version}" // by default this is set to "v${project.version}"

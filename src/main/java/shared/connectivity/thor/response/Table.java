@@ -41,7 +41,7 @@ public class Table {
 
     private String title;                // The title of the table.
     private List<String> columnTitles;   // The titles of the table's columns.
-    private List<Row> rows;      // The rows of the table.
+    private List<Row> rows;              // The rows of the table.
 
     /** 
      * Use this constructor in the case where each row contains 2 values only.
@@ -74,9 +74,6 @@ public class Table {
         this.title = null;
         this.columnTitles = columnTitles;
         this.rows = rows;
-
-        if (columnTitles.size() != rows.size())
-            throw new IllegalArgumentException("Table's column names and rows have different sizes");
     }
 
     /** 
@@ -88,9 +85,6 @@ public class Table {
         this.title = title;
         this.columnTitles = columnTitles;
         this.rows = rows;
-
-        if (columnTitles.size() != rows.size())
-            throw new IllegalArgumentException("Table's column names and rows have different sizes");
     }
 
     /**
