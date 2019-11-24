@@ -26,10 +26,26 @@ public class Response<R extends ResultInterface> {
     private List<Result<R>> results;                   // The top results returned by the system.
 
 
+    /** Constructor */
+    public Response(String id, String name, GeneralArchitecture genArch, List<Component> components, List<R> topResults) {
+        init(id, name, genArch, components, topResults);
+    }
+
+    /** Constructor without {@link GeneralArchitecture}*/
+    public Response(String id, String name, List<Component> components, List<R> topResults) {
+        init(id, name, null, components, topResults);
+    }
+
     /**
-     * Constructor.
+     * Initializes the Response Class.
+     * 
+     * @param id
+     * @param name
+     * @param genArch
+     * @param components
+     * @param topResults
      */
-    public Response(String id, String name,GeneralArchitecture genArch, List<Component> components, List<R> topResults) {
+    private void init(String id, String name,GeneralArchitecture genArch, List<Component> components, List<R> topResults) {
         this.id = id;
         this.name = name;
         this.generalArchitecture = genArch;
