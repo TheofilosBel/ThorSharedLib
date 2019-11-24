@@ -13,7 +13,7 @@ import java.util.Set;
 // nodes contain T data that are unique.
 public class Graph<V,L> {
 
-    // Represents an empty label.
+    /** Represents an empty label */
     public static class NoLabel {}
 
     // Models a graph Edge.
