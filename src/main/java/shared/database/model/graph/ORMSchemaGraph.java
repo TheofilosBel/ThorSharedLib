@@ -12,10 +12,10 @@ import shared.database.model.SQLForeignKeyConstraint;
 import shared.database.model.SQLTable;
 import shared.util.Graph;
 import shared.util.Pair;
-import shared.util.SimpleGraph;
+import shared.util.Graph.NoLabel;
 
 // This class models an ORM graph.
-public class ORMSchemaGraph extends SimpleGraph<ORMNode> {
+public class ORMSchemaGraph extends Graph<ORMNode, NoLabel> {
     private static final Logger LOGGER = Logger.getLogger(ORMSchemaGraph.class.getName());
 
     private HashMap<String,ORMNode> tableToNodeMap;                             // A Mapping between relation's Names and the ORMNodes we created for them.

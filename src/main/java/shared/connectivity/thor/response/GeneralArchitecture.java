@@ -1,5 +1,8 @@
 package shared.connectivity.thor.response;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <pre>
  * Based on the Paper "...", the General Architecture of an NL to SQL System consists of 4 components:
@@ -23,16 +26,53 @@ public class GeneralArchitecture {
     // public Component irGenerator = new Component("Interpretation Generator");
     // public Component sqlTransAndExec = new Component("SQL Translator & Executor");
 
-    private Integer parserOutput;
-    private Integer entityMapperOutput;
-    private Integer interpretationGeneratorOutput;
-    private Integer translatorAndExecutorOutput;
+    /** 
+     * This class represents the output of a General component of the system.
+     */
+    public class ComponentOutput {
+
+        private String componentName; // The name of the component.
+        private Integer output;
+
+        /**
+         * Constructor.
+         */
+        public ComponentOutput(String componentName, Integer output) {
+            this.componentName = componentName;
+            this.output = output;
+        }
+
+        /**
+         * @return The name of the component.
+         */
+        public String getComponentName() {
+            return this.componentName;
+        }
+
+        /**
+         * @return The execution time of the component.
+         */
+        public Integer getOutput() {
+            return this.output;
+        }
+
+        /**
+         * @param output the output to set
+         */
+        public void setOutput(Integer output) {
+            this.output = output;
+        }
+
+    }
+    
+    List<ComponentOutput> componentOutputs;  // The output of the general Components
     
     public GeneralArchitecture() {
-        this.parserOutput = 0;
-        this.entityMapperOutput = 0;
-        this.interpretationGeneratorOutput = 0;
-        this.translatorAndExecutorOutput = 0;
+        this.componentOutputs = new ArrayList<>();
+        this.componentOutputs.add(new ComponentOutput("Parser", 0));
+        this.componentOutputs.add(new ComponentOutput("EntityMapper", 0));
+        this.componentOutputs.add(new ComponentOutput("InterpretationGenerator", 0));
+        this.componentOutputs.add(new ComponentOutput("SQLTranslator&Executor", 0));
     }
 
 
@@ -40,56 +80,28 @@ public class GeneralArchitecture {
      * @param parserOutput the parserOutput to set
      */
     public void setParserOutput(Integer parserOutput) {
-        this.parserOutput = parserOutput;
-    }
-
-    /**
-     * @return the ParserOutput
-     */
-    public Integer getParserOutput() {
-        return parserOutput;
+        this.componentOutputs.get(0).setOutput(parserOutput);
     }
 
     /**
      * @param entityMapperOutput the entityMapperOutput to set
      */
     public void setEntityMapperOutput(Integer entityMapperOutput) {
-        this.entityMapperOutput = entityMapperOutput;
-    }
-
-    /**
-     * @return the entityMapperOutput
-     */
-    public Integer getEntityMapperOutput() {
-        return entityMapperOutput;
+        this.componentOutputs.get(1).setOutput(entityMapperOutput);
     }
 
     /**
      * @param interpretationGeneratorOutput the interpretationGeneratorOutput to set
      */
     public void setInterpretationGeneratorOutput(Integer interpretationGeneratorOutput) {
-        this.interpretationGeneratorOutput = interpretationGeneratorOutput;
+        this.componentOutputs.get(2).setOutput(interpretationGeneratorOutput);
     }
-
-    /**
-     * @return the interpretationGeneratorOutput
-     */
-    public Integer getInterpretationGeneratorOutput() {
-        return interpretationGeneratorOutput;
-    }
-
 
     /**
      * @param translatorAndExecutorOutput the translatorAndExecutorOutput to set
      */
     public void setTranslatorAndExecutorOutput(Integer translatorAndExecutorOutput) {
-        this.translatorAndExecutorOutput = translatorAndExecutorOutput;
+        this.componentOutputs.get(3).setOutput(translatorAndExecutorOutput);
     }
 
-    /**
-     * @return the translatorAndExecutorOutput
-     */
-    public Integer getTranslatorAndExecutorOutput() {
-        return translatorAndExecutorOutput;
-    }
 }
