@@ -36,6 +36,14 @@ public class ComponentTime {
         return this.time;
     }
 
+    /**
+     * @param time the time to set
+     */
+    public void setTime(Double time) {
+        DecimalFormat df = new DecimalFormat("#0.##");
+        this.time = Double.valueOf(df.format(time));
+    }
+
     // public Double getPercentage() {
     //     return this.percentage;
     // }

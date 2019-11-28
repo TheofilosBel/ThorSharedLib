@@ -65,14 +65,31 @@ public class GeneralArchitecture {
 
     }
     
-    List<ComponentOutput> componentOutputs;  // The output of the general Components
+    List<ComponentOutput> componentsOutput;  // The output of the general Components
+    List<ComponentTime> componentsTime;      // The times of the general Components (if mapped by the user)
+    // List<Component> mappedWithParser;
+    // List<Component> mappedWithEntityMapper;
+    // List<Component> mappedWithInterpretationGenerator;
+    // List<Component> mappedWithTranslatorAndExecutor;
+
     
     public GeneralArchitecture() {
-        this.componentOutputs = new ArrayList<>();
-        this.componentOutputs.add(new ComponentOutput("Parser", 0));
-        this.componentOutputs.add(new ComponentOutput("EntityMapper", 0));
-        this.componentOutputs.add(new ComponentOutput("InterpretationGenerator", 0));
-        this.componentOutputs.add(new ComponentOutput("SQLTranslator&Executor", 0));
+        this.componentsOutput = new ArrayList<>();
+        this.componentsOutput.add(new ComponentOutput("Parser", 0));
+        this.componentsOutput.add(new ComponentOutput("EntityMapper", 0));
+        this.componentsOutput.add(new ComponentOutput("InterpretationGenerator", 0));
+        this.componentsOutput.add(new ComponentOutput("SQLTranslator&Executor", 0));
+
+        this.componentsTime = new ArrayList<>();
+        this.componentsTime.add(new ComponentTime("Parser", 0D));
+        this.componentsTime.add(new ComponentTime("EntityMapper", 0D));
+        this.componentsTime.add(new ComponentTime("InterpretationGenerator", 0D));
+        this.componentsTime.add(new ComponentTime("SQLTranslator&Executor", 0D));
+        
+        // this.mappedWithParser = new ArrayList<>();
+        // this.mappedWithEntityMapper = new ArrayList<>();
+        // this.mappedWithInterpretationGenerator = new ArrayList<>();
+        // this.mappedWithTranslatorAndExecutor = new ArrayList<>();
     }
 
 
@@ -80,28 +97,121 @@ public class GeneralArchitecture {
      * @param parserOutput the parserOutput to set
      */
     public void setParserOutput(Integer parserOutput) {
-        this.componentOutputs.get(0).setOutput(parserOutput);
+        this.componentsOutput.get(0).setOutput(parserOutput);
     }
 
     /**
      * @param entityMapperOutput the entityMapperOutput to set
      */
     public void setEntityMapperOutput(Integer entityMapperOutput) {
-        this.componentOutputs.get(1).setOutput(entityMapperOutput);
+        this.componentsOutput.get(1).setOutput(entityMapperOutput);
     }
 
     /**
      * @param interpretationGeneratorOutput the interpretationGeneratorOutput to set
      */
     public void setInterpretationGeneratorOutput(Integer interpretationGeneratorOutput) {
-        this.componentOutputs.get(2).setOutput(interpretationGeneratorOutput);
+        this.componentsOutput.get(2).setOutput(interpretationGeneratorOutput);
     }
 
     /**
      * @param translatorAndExecutorOutput the translatorAndExecutorOutput to set
      */
     public void setTranslatorAndExecutorOutput(Integer translatorAndExecutorOutput) {
-        this.componentOutputs.get(3).setOutput(translatorAndExecutorOutput);
+        this.componentsOutput.get(3).setOutput(translatorAndExecutorOutput);
     }
 
+
+    /**
+     * Maps the argument components with the GeneraComponent Parser
+     * 
+     * @param components the components to map with parser
+     */
+    public void mapWithParser(Component... components) {
+        Double time = 0D;
+        for (Component component : components) {
+            // this.mappedWithParser.add(component);
+            time += component.getTime();
+        }
+        this.componentsTime.get(0).setTime(time);;
+    }
+
+
+    /**
+     * Maps the argument components with the GeneraComponent EntityMapper
+     * 
+     * @param components the components to map with EntityMapper
+     */
+    public void mapWithEntityMapper(Component... components) {
+        Double time = 0D;
+        for (Component component : components) {
+            // this.mappedWithEntityMapper.add(component);
+            time += component.getTime();
+        }
+        this.componentsTime.get(1).setTime(time);;
+    }
+
+
+    /**
+     * Maps the argument components with the GeneraComponent InterpretationGenerator
+     * 
+     * @param components the components to map with InterpretationGenerator
+     */
+    public void mapWithInterpretationGenerator(Component... components) {
+        Double time = 0D;
+        for (Component component : components) {
+            // this.mappedWithInterpretationGenerator.add(component);
+            time += component.getTime();
+        }
+        this.componentsTime.get(2).setTime(time);;
+    }
+
+    /**
+     * Maps the argument components with the GeneraComponent TranslatorAndExecutor
+     * 
+     * @param components the components to map with TranslatorAndExecutor
+     */
+    public void mapWithTranslatorAndExecutor(Component... components) {
+        Double time = 0D;
+        for (Component component : components) {
+            // this.mappedWithTranslatorAndExecutor.add(component);
+            time += component.getTime();
+        }
+        this.componentsTime.get(3).setTime(time);;
+    }
+
+    /**
+     * @return True if all component times for the general architecture components are 0;  
+     */
+    public boolean areTimesEmpty() {
+        Double sum = 0D;
+        for (ComponentTime time : this.componentsTime)
+            sum += time.getTime();
+        return (sum == 0D) ? true : false;
+    }
+
+    /**
+     * @return True if all component outputs for the general architecture components are 0;  
+     */
+    public boolean areOutputsEmpty() {
+        Double sum = 0D;
+        for (ComponentOutput output : this.componentsOutput)
+            sum += output.getOutput();
+        return (sum == 0D) ? true : false;
+    }
+
+
+    /**
+     * @param componentsTime the componentTimes to set
+     */
+    public void setComponentsTime(List<ComponentTime> componentTimes) {
+        this.componentsTime = componentTimes;
+    }
+
+    /**
+     * @param componentsOutput the componentOutputs to set
+     */
+    public void setComponentsOutput(List<ComponentOutput> componentOutputs) {
+        this.componentsOutput = componentOutputs;
+    }
 }

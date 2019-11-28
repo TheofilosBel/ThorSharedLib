@@ -91,6 +91,13 @@ public class Response<R extends ResultInterface> {
         // for (ComponentTime componentTime : this.componentsTime) {
         //     componentTime.setPercentage(componentTime.getTime() / this.totalTime);
         // }
+
+        // Check if general architecture's Times or outputs are Empty.
+        // If so assign those lists a null object so they dont participate in the Json creation.
+        if (this.generalArchitecture != null && this.generalArchitecture.areTimesEmpty())
+            this.generalArchitecture.setComponentsTime(null);
+        if (this.generalArchitecture != null && this.generalArchitecture.areOutputsEmpty())
+            this.generalArchitecture.setComponentsOutput(null);
                             
         // Create a Result object for every tuple.
         this.results = new ArrayList<Result<R>>();
