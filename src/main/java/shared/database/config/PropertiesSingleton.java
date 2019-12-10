@@ -25,7 +25,7 @@ public class PropertiesSingleton {
     /**
      * From ResourceBundle to Properties
      */
-    private static Properties convertResourceBundleToProperties(ResourceBundle resource) {
+    public static Properties convertResourceBundleToProperties(ResourceBundle resource) {
         Properties properties = new Properties();
         Enumeration<String> keys = resource.getKeys();
         while (keys.hasMoreElements()) {
