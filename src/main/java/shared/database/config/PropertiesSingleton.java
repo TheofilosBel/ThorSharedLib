@@ -1,5 +1,7 @@
 package shared.database.config;
 
+import java.util.Enumeration;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /*
@@ -18,6 +20,19 @@ public class PropertiesSingleton {
         }
 
         return resource;
+    }
+
+    /**
+     * From ResourceBundle to Properties
+     */
+    private static Properties convertResourceBundleToProperties(ResourceBundle resource) {
+        Properties properties = new Properties();
+        Enumeration<String> keys = resource.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            properties.put(key, resource.getString(key));
+        }
+        return properties;
     }
     
 }

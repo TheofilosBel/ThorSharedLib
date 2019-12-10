@@ -322,6 +322,58 @@ public class Graph<V,L> {
         return edgesList;
     }
 
+    /**
+     * <pre>
+     * The radius node of a graph is the node with the smallest centric distance.
+     * The centric distance of a node 'u' in a Graph 'P' is defined : 
+     *      centric(u,P) = max dist(u,v,P) | ForEach v in P.
+     * 
+     * @return The radius node of this Graph.
+     * </pre>
+     */
+    public V getRadius() {
+        Integer minDistance = Integer.MAX_VALUE;
+        V minDistNode = null;
+
+        // Loop all the nodes in this graph.
+        for (V node: this.getVertexes()) {
+            // Keep the one with the minimum centric distance
+            Integer dist = this.getCentricDistance(node);
+            if (dist < minDistance) {
+                minDistance = dist;
+                minDistNode = node;
+            }
+        }
+
+
+        return minDistNode;
+    }
+
+
+    /**
+     * <pre>
+     * The centric distance of a node 'u' in a Graph 'P' is defined : 
+     *      centric(u,P) = max dist(u,v,P) | ForEach v in P.
+     * 
+     * @param node
+     * @return
+     * </pre>
+     */
+    public Integer getCentricDistance(V node) {
+        Integer maxDistance = -1;
+
+        // Loop all the nodes in this graph
+        for (V anotherNode: this.getVertexes()) {
+            if (node == anotherNode) continue;
+            Integer dist = this.getPathDistance(node, anotherNode);
+            if (dist > maxDistance)
+                maxDistance = dist;
+        }
+
+        return maxDistance;
+    }
+
+
 
     /**
      * Calculates the distance between two nodes in the graph. 
@@ -354,7 +406,7 @@ public class Graph<V,L> {
 
         // And Call the subGraph function to find the path.
         return this.subGraph(containedData);
-    }
+    }    
 
 
     // Check nodes before sub graph
