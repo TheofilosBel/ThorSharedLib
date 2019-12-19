@@ -5,7 +5,7 @@ import shared.database.model.SQLForeignKeyConstraint;
 import shared.database.model.SQLTable;
 import shared.util.Graph;
 import shared.util.Pair;
-import shared.util.SimpleGraph;
+import shared.util.Graph.NoLabel;
 
 import java.util.List;
 import java.util.Set;
@@ -14,7 +14,7 @@ import java.util.HashSet;
 
 // This class models the database as a graph to depict
 // the foreign key constraints between the tables of the database.
-public class SchemaGraph extends SimpleGraph<SQLTable> {
+public class SchemaGraph extends Graph<SQLTable, NoLabel> {
 
     private HashMap<String,SQLTable> nameToRelationMap;                         // A Mapping between relation's Names and the ORMNodes we created for them.
     private HashMap<String, Set<SQLForeignKeyConstraint>> relationsConstraints; // A mapping between Relation Names an SQLForeignKeyConstraints.        
