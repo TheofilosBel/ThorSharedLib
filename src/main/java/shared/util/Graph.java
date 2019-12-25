@@ -1,10 +1,13 @@
 package shared.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 
 
@@ -63,6 +66,16 @@ public class Graph<V,L> {
         boolean addOutGoingConnection(ListNode node) {
             return this.outGoingConnections.add(node);
         }
+
+        /**         
+         * @return All the ingoing and outgoing connections as a set.
+         */
+        Set<ListNode> getAllConnections() {
+            Set<ListNode> allNodes = new HashSet<>();
+            allNodes.addAll(this.inComingConnections);
+            allNodes.addAll(this.outGoingConnections);
+            return allNodes;
+        }
         
         // Add a node to the in coming connections list
         boolean addInComingConnection(ListNode node) {
@@ -76,6 +89,13 @@ public class Graph<V,L> {
             return this.outGoingConnections.indexOf(node) != -1;
         }
 
+        // Return true if this node connects with parameter node.
+        // This method checks only both outgoing of this and another
+        // node. As result its an undirected check of the connection.
+        boolean isUnDirConnected(ListNode another){
+            return this.isConnected(another) || another.isConnected(this);
+        }
+        
         @Override
         public String toString() {
             String str = new String();
@@ -91,7 +111,7 @@ public class Graph<V,L> {
 
             // Return the string.
             return str;
-        }
+        }        
     }
 
     private List<ListNode> adjacencyList;            // The adjacency List (The vertexes of the graph).
@@ -237,6 +257,20 @@ public class Graph<V,L> {
     public ListNode getNode(V nodeData) {        
         return this.dataToNodeMapping.get(nodeData);
     }
+
+    /**
+     * Return all the nodes corresponding to the nodeDataCollection.
+     * 
+     * @param nodeDataCollection
+     * @return
+     */
+    public List<ListNode> getAllNodes(Collection<V> nodeDataCollection) {
+        List<ListNode> allNodes = new ArrayList<>();
+        for (V nodeData: nodeDataCollection)
+            allNodes.add( this.getNode(nodeData) );
+        return allNodes;
+    }
+
 
     // Add a connection between two nodes.
     public boolean addDirEdge(V startNodeData, V endNodeData) {
@@ -427,12 +461,20 @@ public class Graph<V,L> {
     }
 
 
-    // Returns a subGraph of the this Graph Containing the list of nodes passed as a parameter.
+    /**
+     * Returns a subGraph of the this {@link Graph} containing the nodes passed as a parameter.
+     * 
+     * @param containedData
+     * @return A sub-{@link Graph}
+     */
     public Graph<V,L> subGraph(Set<V> containedData) {                
-        Graph<V,L> subGraph = new Graph<V,L>();                   // The subGraph.
-        Set<V> unInsertedData = new HashSet<>(containedData); // A Set holding the Data not yet in the SUB-GRAPH. 
-        List<ListNode> nodesToExpand = new ArrayList<>();     // A List holding the ListNodes of the GRAPH that we will expand.
+        Graph<V,L> subGraph = new Graph<V,L>();               // The subGraph.        
+        Set<ListNode> nodesToExpand = new HashSet<>();        // A List holding the ListNodes of the GRAPH that we will expand.
         List<ListNode> finalNodes = new ArrayList<>();        // A final node is a node with no outGoing Edges. This list stores final SUB-GRAPH nodes.
+
+        // =============================================================================================
+        // Keep in mind that this.Nodes are different than subGraph.Nodes but contain the same NodeData.
+        // =============================================================================================
 
         // Check the special case where containedData contains only one 
         // node, and return the graph containing that node only.
@@ -446,19 +488,21 @@ public class Graph<V,L> {
         if (checkNodesForSubGraph(containedData) == false)
             return null;
         
-        // Initialize the subGraph with the first object form the list.
-        V firstObject = containedData.iterator().next();
-        subGraph.addNode(firstObject);
-        unInsertedData.remove(firstObject);
+        // Initialize the subGraph with all the object form the containedData set.
+        for (V newNode: containedData)
+            subGraph.addNode(newNode);
 
         // Initialize the other variables.
-        nodesToExpand.add(this.getNode(firstObject));
-        finalNodes.add(subGraph.getNode(firstObject));            
+        nodesToExpand.addAll(this.getAllNodes(containedData));
+        finalNodes.addAll(subGraph.getAllNodes(containedData));
 
-        // Loop until the graph contains all the Data in the list.
-        while (!unInsertedData.isEmpty()) {
-            subGraph.expandAllByOne(nodesToExpand, unInsertedData, finalNodes);            
-        }
+        // Loop until the subGraph achieves the right amount of connections.
+        // Starting the subGraph contains | containedData | disconnected parts.
+        // 
+        Boolean isConnected = false;
+        while (!isConnected)
+            isConnected = subGraph.expandAllByOne(nodesToExpand, finalNodes);
+        
 
         // Prune unwanted paths that dont contain containedData.
         subGraph.pruneUnwantedPaths(containedData, finalNodes);        
@@ -466,13 +510,20 @@ public class Graph<V,L> {
         return subGraph;
     }
 
-    // Expand this graph to contain all the neighboring nodes linked (distance one edge) with it's contained nodes.
-    // If the expansion process adds an object from unInsertedData parameter list to this subGraph, remove the Object
-    // from the list. The nodesToExpand list comes from a Graph who contains all the nodes that this subGraph contains.
-    // It is a data structure that gives us the information about the neighboring nodes. Also update the finalNodes
-    // list with all the nodes of this subGraph that have no outgoing edges.
-    private void expandAllByOne(List<ListNode> nodesToExpand, Collection<V> unInsertedData, List<ListNode> finalNodes) {
-        List<ListNode> newNodesToExpand = new ArrayList<>();
+    /**
+     * 
+     * @param nodesToExpand
+     * @param finalNodes
+     * @return The number of connections achieved while disconnected parts of the subGraph Expanded.
+     */
+    private boolean expandAllByOne(Set<ListNode> nodesToExpand, List<ListNode> finalNodes) {
+        Set<ListNode> newNodesToExpand = new HashSet<>();
+
+        // ================================================================================================
+        // Keep in mind that nodesToExpand are different than subGraph.Nodes but contain the same NodeData.
+        // NodesToExpand are from the initial graph, not the sugGraph.
+        // ================================================================================================
+        
         
         // Loop all the graph nodes corresponding to this subGraph's Nodes.
         for (ListNode node: nodesToExpand) {            
@@ -480,24 +531,40 @@ public class Graph<V,L> {
             ListNode thisSubGraphNode = this.getNode(node.data);
 
             // Loop all the neighboring nodes and add them to as neighbors of thisSubGraphNode.
-            for (ListNode neighboringNode: node.outGoingConnections) {
+            for (ListNode neighboringNode: node.getAllConnections()) {
+                ListNode thisNeighboringNode = this.getNode(neighboringNode.data);
+
                 // If the neighboringNode is not already in this subGraph add it and link it with thisSubGraphNode.
-                if (this.getNode(neighboringNode.data) == null) {
-                    this.addNode(neighboringNode.data);
-                    this.addDirEdge(thisSubGraphNode.data, neighboringNode.data);
+                if (thisNeighboringNode == null) {
+                    this.addNode(neighboringNode.data);   // Add the node.
+                    thisNeighboringNode = this.getNode(neighboringNode.data);
+
+                    // Keep the way this graph is connected (dir or unDir)
+                    if (node.isConnected(neighboringNode))
+                        this.addDirEdge(thisSubGraphNode.data, neighboringNode.data);
+                    if (neighboringNode.isConnected(node))
+                        this.addDirEdge(neighboringNode.data, thisSubGraphNode.data);
+                    
 
                     // ThisSubGraphNode is no longer a final node. But the new 
                     // node with data: neighboringNode.data added above is a final node.
                     finalNodes.remove(thisSubGraphNode);
-                    finalNodes.add(this.getNode(neighboringNode.data));
+                    finalNodes.add(thisNeighboringNode);
 
                     // Expand this node on the next call of this function.
-                    newNodesToExpand.add(neighboringNode);                    
+                    newNodesToExpand.add(neighboringNode);                                        
+                }
+                // Else thisNeighboringNode exists but its not connected with thisSubGraphNode 
+                // then connect it and remove both from finalNodes. 
+                // Check if the whole graph is connected and if yes return.
+                else if (!thisNeighboringNode.isUnDirConnected(thisSubGraphNode)) {                    
+                    if (node.isConnected(neighboringNode))
+                        this.addDirEdge(thisSubGraphNode.data, thisNeighboringNode.data);
+                    if (neighboringNode.isConnected(node))
+                        this.addDirEdge(thisNeighboringNode.data, thisSubGraphNode.data);
 
-                    // If the new node added in this loop has data existing in the unInsertedData list
-                    // remove that Data Object from the list. If the list is empty then stop the expansion.
-                    unInsertedData.remove(neighboringNode.data);
-                    if (unInsertedData.isEmpty()) return;
+                    finalNodes.removeAll(Arrays.asList(thisNeighboringNode, thisSubGraphNode));
+                    if (this.isConnected(thisNeighboringNode)) return true;
                 }
             }            
         }
@@ -505,13 +572,60 @@ public class Graph<V,L> {
         // Replace the nodesToExpand with the newNodesToExpand for the next call.
         nodesToExpand.clear(); 
         nodesToExpand.addAll(newNodesToExpand);
+        return false;    
     }
 
+    /**
+     * Traverses all the graph and checks if it can visit all its nodes.
+     * @param OptionalStartPoint  Its an optional start point.
+     * @return
+     */
+    private boolean isConnected(ListNode optionalStartPoint) {
+        if (this.adjacencyList.isEmpty()) return true;
 
-    // Prune paths in the graph that dont contain any of the wantedData in the parameter list.
+        // Pick a starting point if its null.
+        if (optionalStartPoint == null)
+            optionalStartPoint = this.adjacencyList.get(0);
+
+        // Start traversing the graph
+        HashSet<ListNode> visitedNodes = new HashSet<>();
+        Queue<ListNode> queue = new LinkedList<>();
+
+        // Insert the starting point
+        queue.add(optionalStartPoint);
+        visitedNodes.add(optionalStartPoint);
+        
+
+        // Start traversing
+        while (!queue.isEmpty()) {
+            ListNode node = queue.poll();
+
+            // Add node's children in the queue
+            for (ListNode child: node.getAllConnections()) {
+
+                // Skip visited nodes
+                if (visitedNodes.contains(child))
+                    continue;
+
+                // Assign node as visited.
+                visitedNodes.add(child);
+                queue.add(child);
+            }            
+        }
+
+        // If number of nodes in the graph are not equal to 
+        // visited nodes then return false.
+        if (this.adjacencyList.size() != visitedNodes.size())
+            return false;
+        else 
+            return true;
+    }
+
+    // Prune paths in the graph that dont contain any of the wantedData in the
+    // parameter list.
     // Start from the finalNodes of the graph with no outgoing edges and prune all nodes that 
     // dont contain an object from the list, and are not used as intermediate nodes connecting such nodes.
-    private void pruneUnwantedPaths(Collection<V> wantedData, Collection<ListNode> finalNodes) {
+    private void pruneUnwantedPaths(Set<V> wantedData, Collection<ListNode> finalNodes) {
         // Loop all the final nodes and start pruning from these nodes.
         for(ListNode finalNode: finalNodes) {
             this.recPruning(finalNode, wantedData);
@@ -519,13 +633,13 @@ public class Graph<V,L> {
     }
 
     // Recursive pruning of nodes with no outgoing edges. In case the node's data match 
-    // one of the wantedData , leave the node intact. 
-    private void recPruning(ListNode nodeToPrune, Collection<V> wantedData) {
+    // one of the wantedData, leave the node intact. 
+    private void recPruning(ListNode nodeToPrune, Set<V> wantedData) {
         // If the data of the nodeToPrune is a wantedObject dont prune that node.
         if (wantedData.contains(nodeToPrune.data)) return;
 
-        // If the nodes is used to connect other nodes then dont prune it.
-        if (nodeToPrune.outGoingConnections.size() != 0) return;
+        // If the nodes is used to connect 2 other nodes then dont prune it.
+        if (nodeToPrune.getAllConnections().size() >= 2) return;
 
         // Else prune the node and call the rec function for all nodes connected with this node.
         this.removeNode(nodeToPrune.data);
@@ -534,17 +648,22 @@ public class Graph<V,L> {
         }        
     }
 
-
+    
     // Removes a node with data like parameter NodeData, along with edges that start or end at this node.
     private boolean removeNode(V nodeData) {
         // First find the node.
         ListNode nodeToRemove = this.getNode(nodeData);
-        if (nodeToRemove == null || !nodeToRemove.outGoingConnections.isEmpty()) return false;
+        if (nodeToRemove == null) return false;
 
         // Then Follow the incoming edges and remove those edges from the nodes
         // connecting with nodeToRemove node.
         for (ListNode neighboringNode: nodeToRemove.inComingConnections)
             neighboringNode.outGoingConnections.remove(nodeToRemove);
+
+        // Then Follow the outgoing edges and remove those edges from the nodes
+        // connecting with nodeToRemove node.
+        for (ListNode neighboringNode: nodeToRemove.outGoingConnections)
+            neighboringNode.inComingConnections.remove(nodeToRemove);
             
         // Remove all edges connected with this node from list.
         List<Edge> edgesToRemove = new ArrayList<>();
