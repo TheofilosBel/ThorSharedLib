@@ -128,4 +128,10 @@ public class SQLQueries {
 
     // Query to get the average length in words of all columns with a FULLTEXT index in the current database schema.
     public static final String COLUMN_AVERAGE_LENGTH_QUERY = "SELECT * FROM avg_length";
+
+
+    // ---------------------------------------------------------------------------------------
+    //                           POSTGRE SQL QUERIES
+    // ---------------------------------------------------------------------------------------
+    
 }

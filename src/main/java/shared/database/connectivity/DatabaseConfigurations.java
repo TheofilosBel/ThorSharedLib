@@ -9,9 +9,15 @@ import shared.database.config.PropertiesSingleton;
  * This class contains the Database configuration properties
  */
 public class DatabaseConfigurations {
+    public enum DatabaseType { psql, mysql};   // The database type.
 
-    private static final String driver = "com.mysql.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://%s:%s/%s?useSSL=%s";
+    private static final String mysqlDriver = "com.mysql.jdbc.Driver";
+    private static final String psqlDriver = "org.postgresql.Driver";
+    
+
+    private static final String mysqlURL = "jdbc:mysql://%s:%s/%s?useSSL=%s";
+    private static final String psqlURL = "jdbc:postgresql://%s:%s/%s";
+
 
     private String schemaName = null;           // The schema Name
     private String userName = null;             // The user Name
@@ -19,22 +25,23 @@ public class DatabaseConfigurations {
     private String hostName = "localhost";      // The hostName
     private String portNumber = "3306";         // The port number
     private Boolean useSSL = false;             // The useSSL boolean
+    private DatabaseType type = null;           // The database type {psql, mysql}
 
-
-    public DatabaseConfigurations(String propertiedFileName, String schemaName) {
+    public DatabaseConfigurations(String propertiesFileName, String schemaName) {
         // Get the app properties file.
-        ResourceBundle resource = PropertiesSingleton.getBundle(propertiedFileName);
+        ResourceBundle resource = PropertiesSingleton.getBundle(propertiesFileName);
 
         // Initialize the configs
         try {
-            this.schemaName(schemaName)                    
-              .userName(resource.getString("database.mysql.username"))
-              .password(resource.getString("database.mysql.password"))
-              .hostName(resource.getString("database.mysql.hostname"))
-              .portNumber(resource.getString("database.mysql.portnumber"));
+            this.schemaName(schemaName)        
+              .userName(resource.getString("database.username"))
+              .password(resource.getString("database.password"))
+              .hostName(resource.getString("database.hostname"))
+              .portNumber(resource.getString("database.portnumber"))
+              .databaseType((resource.getString("database.type").equals("psql"))? DatabaseType.psql : DatabaseType.mysql );
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("[ERR] Could not initialize Configurations with properties file: " + propertiedFileName);
+            System.err.println("[ERR] Could not initialize Configurations with properties file: " + propertiesFileName);
         }
     }
 
@@ -56,7 +63,12 @@ public class DatabaseConfigurations {
      * Returns the URL formated with the parameters hostName, portNumber, schemaName, useSSL
      */
     public String getFormatedURL() {
-        return String.format(URL, this.hostName, this.portNumber, this.schemaName, String.valueOf(this.useSSL));
+        if (this.type == DatabaseType.psql)
+            return String.format(psqlURL, this.hostName, this.portNumber, this.schemaName);
+        else if (this.type == DatabaseType.mysql)
+            return String.format(mysqlURL, this.hostName, this.portNumber, this.schemaName, String.valueOf(this.useSSL));
+        else 
+            throw new RuntimeException("Database type unspecified");
     }
 
     /**
@@ -163,10 +175,20 @@ public class DatabaseConfigurations {
         return this;
     }
 
+    public DatabaseConfigurations databaseType(DatabaseType type) {
+        this.type = type;
+        return this;
+    }
+
     /**
      * @return the driver
      */
-    public static String getDriver() {
-        return driver;
-    }    
+    public String getDriver() {
+        if (this.type == DatabaseType.psql)
+            return psqlDriver;
+        else if (this.type == DatabaseType.mysql)
+            return mysqlDriver;
+        else 
+            throw new RuntimeException("Database type unspecified");
+    }
 }

@@ -30,6 +30,15 @@ public class SQLColumn implements SchemaElement {
         this.averageLength = 0.0;
     }
 
+    public SQLColumn(SQLTable table, String name, SQLType type) {
+        this.table = table;
+        this.name = name;
+        this.type = type;
+        this.key  = new ArrayList<>();        
+        this.isIndexed = false; // It will be set latter
+        this.averageLength = 0.0;
+    }
+
     // Copy Constructor.
     public SQLColumn(SQLColumn column) {
         this.table = column.table;

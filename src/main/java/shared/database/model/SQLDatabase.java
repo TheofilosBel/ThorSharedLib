@@ -3,13 +3,16 @@ package shared.database .model;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
+
 
 // This class models a SQL database.
 public class SQLDatabase {
 
-    private String name; // The database name.
-    private List<SQLTable> tables; // List of tables in the database.
-    private List<SQLForeignKeyConstraint> fkConstraints; // List of foreign key constraints between tables.
+    protected DatabaseType type;                             // The type of the database {psql, mysql}.
+    protected String name;                                   // The database name.
+    protected List<SQLTable> tables;                         // List of tables in the database.
+    protected List<SQLForeignKeyConstraint> fkConstraints;   // List of foreign key constraints between tables.
 
     public SQLDatabase() {
         this.tables = new ArrayList<SQLTable>();
@@ -69,7 +72,7 @@ public class SQLDatabase {
         for (SQLTable table : this.tables) {
             str += "\t" + table.getName() + " ( ";
             for (SQLColumn column : table.getColumns()) {
-                str += column.getName() + ((column.isIndexed()) ? ("*") : ("")) + " ";
+                str += column.getName() + ((column.isIndexed()) ? ("*") : ("")) + ((column.isPrimary()) ? ("^") : ("")) + " ";
             }
             str += ")\n";
         }
@@ -81,6 +84,20 @@ public class SQLDatabase {
         }
 
         return str;
+    }
+
+    /**
+     * @return the type
+     */
+    public DatabaseType getType() {
+        return type;
+    }
+
+    /**
+     * @return the type
+     */
+    public void setType(DatabaseType type) {
+        this.type = type;
     }
 
     // Getters and Setters.
