@@ -1,23 +1,20 @@
-package shared.database .model;
+package shared.database.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.database.connectivity.DataSourceFactory;
+import shared.database.connectivity.DatabaseConfigurations;
 import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
 
 
 // This class models a SQL database.
-public class SQLDatabase {
+public abstract class SQLDatabase {
 
     protected DatabaseType type;                             // The type of the database {psql, mysql}.
     protected String name;                                   // The database name.
     protected List<SQLTable> tables;                         // List of tables in the database.
     protected List<SQLForeignKeyConstraint> fkConstraints;   // List of foreign key constraints between tables.
-
-    public SQLDatabase() {
-        this.tables = new ArrayList<SQLTable>();
-        this.fkConstraints = new ArrayList<SQLForeignKeyConstraint>();
-    }
 
     public SQLDatabase(String name) {
         this.name = name;
@@ -85,6 +82,58 @@ public class SQLDatabase {
 
         return str;
     }
+
+
+    /****************************
+     *  Database Action Methods *
+     ****************************
+     *
+     * These methods are overwritten by sub classes and call different
+     * objects to handle actions like: 
+     * - Fill database.
+     * - Find string in indexes. 
+     */
+
+    /**
+     * Instantiate a database object using the the configuration file and the database name
+     * to connect to the database.
+     * 
+     * @param databaseName
+     * @return The database object or null in case of connection error.
+     */
+    public static SQLDatabase InstantiateDatabase(String databaseName, String configurationFileName) {
+        DatabaseConfigurations dc = new DatabaseConfigurations(configurationFileName, databaseName);
+        DataSourceFactory.loadDbConfigurations(dc);
+        
+        SQLDatabase database = null;
+        if (DataSourceFactory.getType() == DatabaseType.mysql)
+            database = new MySqlDatabase(databaseName);
+        else if (DataSourceFactory.getType() == DatabaseType.psql)
+            database = new PostgreSQLDatabase(databaseName);
+        else
+            System.err.println("Database type not supported. Currently supporting: {Mysql, PostgreSQL}");
+
+        // Fill the database
+        if (database != null)
+            database.fillDatabase();
+
+        return database;
+    }
+
+    
+
+    /**
+     * Fills the database object automatically by reading information from the Database Engine (Mysql/postgre).
+     *
+     */
+    public abstract void fillDatabase();
+
+
+
+
+    /***********************
+     *  Getters And Setter *
+     ***********************/
 
     /**
      * @return the type

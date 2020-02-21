@@ -19,7 +19,7 @@ import java.sql.SQLException;
 /**
  * Reads a MySQL Database
  */
-public class MySQLInformationReader {
+public class MySQLInformationReader implements DatabaseInfoReader{
 
 
     // Uses the INFORMATION_SCHEMA to get the tables and columns of a database.

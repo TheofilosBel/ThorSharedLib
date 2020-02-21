@@ -20,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Reads a MySQL Database
  */
-public class PostgreSQLInformationReader {
+public class PostgreSQLInformationReader implements DatabaseInfoReader {
 
 
     /**

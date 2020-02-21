@@ -17,42 +17,22 @@ import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
 // This class has the required functionality to get information
 // about a database such as table names, column names and column types.
 // It queries the INFORMATION_SCHEMA table.
-public class DatabaseInfo {
+public interface DatabaseInfoReader {
 
     // Gets all the information needed from the database.
-    public static SQLDatabase getDatabaseObject(String databaseName) {
-        SQLDatabase database = new SQLDatabase();
-        database.setName(databaseName);
-        database.setType(DataSourceFactory.getType());
-
-        // Scan the database
-        if (database.getType() == DatabaseType.mysql) {
-            MySQLInformationReader.getTableAndColumnNames(database);
-            MySQLInformationReader.getFKConstraints(database);
-            MySQLInformationReader.getIndexedColumns(database);
-            MySQLInformationReader.getTableAndColumnStatistics(database);
-        }        
-        else {
-            PostgreSQLInformationReader.getTableAndColumnNames(database);
-            PostgreSQLInformationReader.getFKConstraints(database);
-            PostgreSQLInformationReader.getIndexedColumns(database);
-            PostgreSQLInformationReader.getTableAndColumnStatistics(database);
-        }
-
-        return database;
-    }
+    public static void getTableAndColumnNames(SQLDatabase database) {}
+    public static void getFKConstraints(SQLDatabase database) {}
+    public static void getIndexedColumns(SQLDatabase database) {}
+    public static void getTableAndColumnStatistics(SQLDatabase database) {}
     
 
 
     public static void main(String[] args) {
-        DatabaseConfigurations dc = new DatabaseConfigurations("app", "cordis");
-        DataSourceFactory.loadDbConfigurations(dc);
-        SQLDatabase d = DatabaseInfo.getDatabaseObject("cordis");
-
+        SQLDatabase database = SQLDatabase.InstantiateDatabase("cordis", "app");
+        
         Connection con = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-
         try {
             con = DataSourceFactory.getConnection();
             stmt = con.prepareStatement(String.format( SQLQueries.SQL_SELECT_QUERY + " " + SQLQueries.LIMIT_STATEMENT, "*", "projects", 5));
@@ -61,7 +41,7 @@ public class DatabaseInfo {
             List<SQLTuple> tuples = new ArrayList<>();
             while(rs.next()) {
                 SQLTuple tuple = new SQLTuple();
-                tuple.fill(d, rs);
+                tuple.fill(database, rs);
                 tuples.add(tuple);
             }
             SQLTupleList list = new SQLTupleList(tuples);

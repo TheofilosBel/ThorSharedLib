@@ -14,7 +14,6 @@ public class DatabaseUtil {
     private DatabaseUtil() {}
     
     public static boolean testConnection() {
-        // Choose between "MAS" and "IMDB" databases        
         Connection con = null;
         Statement stmt = null;
         ResultSet   rs = null;

@@ -150,6 +150,13 @@ public class DatabaseConfigurations {
         this.portNumber = portNumber;
     }
 
+    /**
+     * @return the type
+     */
+    public DatabaseType getType() {
+        return type;
+    }
+
     public DatabaseConfigurations schemaName(String schemaName) {
         this.schemaName = schemaName;
         return this;

@@ -33,6 +33,7 @@ public class DataSourceFactory {
             ds.setMinIdle(5);
             ds.setMaxIdle(10);
             ds.setMaxOpenPreparedStatements(100);
+            type = config.getType();
         }
         else {        
             LOGGER.info("[ERR] Configuration Object not assigned");
