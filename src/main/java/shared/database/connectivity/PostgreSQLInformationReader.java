@@ -178,15 +178,15 @@ public class PostgreSQLInformationReader implements DatabaseInfoReader {
             // Loop through every column.
             while (rs.next()) {
                 String tableName = rs.getString("tablename");
-                String indexDef = rs.getString("indexdef");
+                String indexName = rs.getString("indexname");
 
-                // Extract the column name from index definition. 
-                // Def is like:  CREATE INDEX name_idx ON <schema>.<table> USING gin (to_tsvector('simple'::regconfig, <column>))
-                for (SQLColumn col: database.getTableByName(tableName).getColumns())
-                    if (indexDef.split("USING")[1].contains(col.getName())) {  // Split to USING then take the right part and find a column name.
-                        col.setIsIndexed(true);
-                        break;
-                    }
+                // Extract the column name from index name. 
+                // SEE: DatabaseIndexCreator, to check how we create index names.
+                String colName = indexName.split("_")[ indexName.split("_").length -1 ]; // The last token is the column name.
+                SQLColumn col = database.getTableByName(tableName).getColumnByName(colName);
+                if (col != null)
+                    col.setIsIndexed(true);
+                                            
             }
         }
         catch (SQLException e) {

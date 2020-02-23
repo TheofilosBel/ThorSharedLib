@@ -14,11 +14,8 @@ public class PropertiesSingleton {
 
     public static ResourceBundle getBundle(String resourcePath) {
         // Lazy load the Singleton Class
-        if (resource == null) {
+        if (resource == null)
             resource = ResourceBundle.getBundle(resourcePath);
-            return resource;
-        }
-
         return resource;
     }
 

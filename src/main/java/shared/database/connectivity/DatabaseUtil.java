@@ -75,6 +75,38 @@ public class DatabaseUtil {
         return booleanPhrase;  
     }
 
+
+    /**
+     * Returns a phrase to use on a tsquery search that enforces that all terms 
+     * in the phrase must be present to return a result.
+     * 
+     * @param phrase
+     * @return
+     */
+    public static String prepareForAndTsQuerySearch(String phrase) {        
+        String tsQueryPhrase = "";        
+        int index = PrintingUtils.findNextChar(phrase, 0);
+
+        while(index < phrase.length()) {
+            // Get the char of the index position.
+            char c = phrase.charAt(index);
+                        
+            // Add a & sign in case of white space
+            if (PrintingUtils.isWhiteSpace(c)) {
+                index = PrintingUtils.findNextChar(phrase, index);
+                if (index <  phrase.length())
+                    tsQueryPhrase += " & ";
+            }
+            else {
+                // Add the char to the boolean phrase
+                tsQueryPhrase += c;
+                index++;
+            }
+        }
+
+        return tsQueryPhrase;  
+    }
+
     public static String escapeStrValue(String sqlValue) {
         String escapedStr = new String();
 

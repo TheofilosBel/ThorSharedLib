@@ -42,4 +42,11 @@ public class SQLIndexResult {
     }
 
 
+    /**
+     * @return the tuples
+     */
+    public List<SQLTuple> getTuples() {
+        return tuples;
+    }
+
 }

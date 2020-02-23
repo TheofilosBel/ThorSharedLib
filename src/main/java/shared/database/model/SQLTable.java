@@ -179,7 +179,7 @@ public class SQLTable implements SchemaElement{
         this.columns.addAll(columns);
     }
 
-    // Returns the column with the given name, or null if not found.
+    /** Returns the column with the given name, or null if not found. */ 
     public SQLColumn getColumnByName(String columnName) {
         for (SQLColumn column : this.columns) {
             if (column.getName().equals(columnName)) {

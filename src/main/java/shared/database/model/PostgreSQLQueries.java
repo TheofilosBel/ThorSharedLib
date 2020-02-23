@@ -1,8 +1,18 @@
 package shared.database.model;
 
-
+import shared.database.connectivity.DatabaseIndexCreator;
 
 public class PostgreSQLQueries extends SQLQueries {
+
+
+    public final static String INV_INDEX_COND = "%s @@ to_tsquery(%s)";  
+
+
+
+
+    /**************************************************
+     * Queries fetching information from the database *
+     ***************************************************/
 
     // Sets the search path for the connection.
     public static final String SET_SEARCH_PATH = "SET search_path TO %s, public";
@@ -40,7 +50,7 @@ public class PostgreSQLQueries extends SQLQueries {
 
 
     public static final String GET_GIN_GIX_INDEXES =
-      "SELECT tablename, indexname, indexdef " + 
+      "SELECT tablename, indexname " + 
       "FROM pg_indexes " + 
       "WHERE indexdef LIKE '% gin %' OR indexdef like '% gist %'";
 
@@ -48,4 +58,15 @@ public class PostgreSQLQueries extends SQLQueries {
     public static final String TABLE_ROW_COUNT_QUERY =
       "SELECT relname as TABLE_NAME, n_live_tup as TABLE_ROWS " +
       "FROM pg_stat_user_tables";
+
+    public static final String UPDATE_TABLE_SET_TSVECTOR = 
+      "UPDATE %s SET %s = to_tsvector('english', coalesce(%s,''))";
+
+    public static final String CREATE_GIN_INDEX = 
+      "CREATE INDEX %s ON %s USING GIN (%s)";
+      
+    // TRANSACTION COMMANDS
+    public static final String BEGIN_TRANSACTION = "BEGIN TRANSACTION";
+    public static final String COMMIT_CHANGES = "COMMIT";
+    public static final String ROLLBACK = "ROLLBACK";
 }

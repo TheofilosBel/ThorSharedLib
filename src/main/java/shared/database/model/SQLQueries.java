@@ -7,7 +7,7 @@ public class SQLQueries {
 
     // Limit Statement for the SQL Query.
     public final static String LIMIT_STATEMENT = "LIMIT %d";
-    public final static String LIMIT_STATEMENT_2K = " LIMIT 0, 2000";
+    public final static String LIMIT_STATEMENT_2K = " LIMIT 2000";
 
     // The alias specifier.
     public final static String ALIAS_SPECIFIER = " as ";
@@ -19,6 +19,9 @@ public class SQLQueries {
     public static final String ALIAS_LETTER = "t";
 
     public static final String SQL_MATCH_AGAINST_STMT = "match(%s) against('%s' IN BOOLEAN MODE)";
+    public static final String INV_INDEX_CONDITION = "match(%s) against(%s IN BOOLEAN MODE)";
+
+    public static final String LIKE_STMT = "%s LIKE ?";
 
     // A Query that disables the FK constraints
     public static final String SQL_DISABLE_CONSTRAINTS_QUERY = "SET FOREIGN_KEY_CHECKS=0";
@@ -55,11 +58,11 @@ public class SQLQueries {
     public final static String SQL_GROUPBY_CLAUSE = "GROUP BY %s";    
 
     // The Where Clause.
-    public final static String SQL_WHERE_CLAUSE = "WHERE %s";
+    public final static String SQL_WHERE_CLAUSE = "WHERE %s ";
 
     public static final String SQL_SELECT_QUERY = 
-        "SELECT %s" +  // The columns to project. (use a /n)
-        "FROM %s";     // The %s are the Tables with their aliases.
+        "SELECT %s " +  // The columns to project. (use a /n)
+        "FROM %s ";     // The %s are the Tables with their aliases.
 
     public static final String SQL_SELECT_DISTINCT_QUERY = 
     "SELECT DISTINCT %s" +  // The columns to project. (use a /n)
@@ -90,17 +93,22 @@ public class SQLQueries {
         "CREATE VIEW %s "+   // Here goes the view name
         "AS %s \n";          // Here goes to select Query 
 
+
+    public final static String SQL_ADD_COLUMN_QUERY = 
+        "ALTER TABLE %s " +
+        "ADD COLUMN %s %s";
+
     // This query is executed against all indexes of the database
     // and returns all tuples of a relation in which the keyword was found.
     public final static String INV_INDEX_QUERY = "SELECT %s FROM %s WHERE match(%s) against(? IN BOOLEAN MODE)";
 
     // This query searches for a value in a specific column 
     // with the use of LIKE "%<value>%".
-    public final static String LIKE_QUERY = "SELECT %s FROM %s WHERE %s LIKE ? LIMIT 0, 2000";
+    public final static String LIKE_QUERY = "SELECT %s FROM %s WHERE %s LIKE ? LIMIT 2000";
 
     // This query searches for values that are in a specific numeric column
     // but also restricted by an operator and a number (except limit 0,5).    
-    public final static String NUMERIC_QUERY = "SELECT %s FROM %s WHERE %s %s ? LIMIT 0, 5"; 
+    public final static String NUMERIC_QUERY = "SELECT %s FROM %s WHERE %s %s ? LIMIT 5"; 
 
     // Query to get information about all columns.
     public static final String INFORMATION_SCHEMA_COLUMNS_QUERY =
@@ -129,9 +137,4 @@ public class SQLQueries {
     // Query to get the average length in words of all columns with a FULLTEXT index in the current database schema.
     public static final String COLUMN_AVERAGE_LENGTH_QUERY = "SELECT * FROM avg_length";
 
-
-    // ---------------------------------------------------------------------------------------
-    //                           POSTGRE SQL QUERIES
-    // ---------------------------------------------------------------------------------------
-    
 }

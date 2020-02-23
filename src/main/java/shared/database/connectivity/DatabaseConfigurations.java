@@ -14,12 +14,13 @@ public class DatabaseConfigurations {
     private static final String mysqlDriver = "com.mysql.jdbc.Driver";
     private static final String psqlDriver = "org.postgresql.Driver";
     
-
     private static final String mysqlURL = "jdbc:mysql://%s:%s/%s?useSSL=%s";
     private static final String psqlURL = "jdbc:postgresql://%s:%s/%s";
 
+    // The Singleton Pattern
+    private static DatabaseConfigurations instance;
 
-    private String schemaName = null;           // The schema Name
+    private String databaseName = null;         // The database Name
     private String userName = null;             // The user Name
     private String password = null;             // The password
     private String hostName = "localhost";      // The hostName
@@ -27,13 +28,49 @@ public class DatabaseConfigurations {
     private Boolean useSSL = false;             // The useSSL boolean
     private DatabaseType type = null;           // The database type {psql, mysql}
 
-    public DatabaseConfigurations(String propertiesFileName, String schemaName) {
+
+    /**
+     * Fill the configuration using the configuration file name and the database name.
+     * 
+     * @param propertiesFileName
+     * @param databaseName
+     */
+    public static void fill(String propertiesFileName) {
+        if (instance == null)
+            instance = new DatabaseConfigurations(propertiesFileName);
+    }    
+
+    /**
+     * This function updates the database name on the current configurations and reload 
+     * the configurations used on {@link DataSourceFactory}.
+     * 
+     * @param databaseName
+     */
+    public static void useDatabase(String databaseName) {
+        if (instance != null) {
+            instance.databaseName = databaseName;
+            DataSourceFactory.loadDbConfigurations(instance);
+        }
+        else {
+            throw new RuntimeException("[ERR] Uninitialized Configurations. Please call DatabaseConfigurations.fill() to initialize them");
+        }
+    }
+
+    /**
+     * @return the Singleton Database Instance
+     */
+    public static DatabaseConfigurations getInstance() {
+        return instance;        
+    }
+
+
+    private DatabaseConfigurations(String propertiesFileName) {
         // Get the app properties file.
         ResourceBundle resource = PropertiesSingleton.getBundle(propertiesFileName);
 
         // Initialize the configs
         try {
-            this.schemaName(schemaName)        
+            this.databaseName(null)        
               .userName(resource.getString("database.username"))
               .password(resource.getString("database.password"))
               .hostName(resource.getString("database.hostname"))
@@ -45,14 +82,14 @@ public class DatabaseConfigurations {
         }
     }
 
-    public DatabaseConfigurations(String schemaName, String userName, String password) {
-        this.schemaName = schemaName;
+    public DatabaseConfigurations(String databaseName, String userName, String password) {
+        this.databaseName = databaseName;
         this.userName = userName;
         this.password = password;
     }
 
-    public DatabaseConfigurations(String schemaName, String userName, String password, String host, String port) {
-        this.schemaName = schemaName;
+    public DatabaseConfigurations(String databaseName, String userName, String password, String host, String port) {
+        this.databaseName = databaseName;
         this.userName = userName;
         this.password = password;
         this.hostName = host;
@@ -60,13 +97,13 @@ public class DatabaseConfigurations {
     }
 
     /**
-     * Returns the URL formated with the parameters hostName, portNumber, schemaName, useSSL
+     * Returns the URL formated with the parameters hostName, portNumber, databaseName, useSSL
      */
     public String getFormatedURL() {
         if (this.type == DatabaseType.psql)
-            return String.format(psqlURL, this.hostName, this.portNumber, this.schemaName);
+            return String.format(psqlURL, this.hostName, this.portNumber, this.databaseName);
         else if (this.type == DatabaseType.mysql)
-            return String.format(mysqlURL, this.hostName, this.portNumber, this.schemaName, String.valueOf(this.useSSL));
+            return String.format(mysqlURL, this.hostName, this.portNumber, this.databaseName, String.valueOf(this.useSSL));
         else 
             throw new RuntimeException("Database type unspecified");
     }
@@ -76,7 +113,7 @@ public class DatabaseConfigurations {
      * needed information to be used as to configure a database.
      */
     public boolean isAssigned() {
-        return this.schemaName != null && this.userName != null && this.password != null &&
+        return this.databaseName != null && this.userName != null && this.password != null &&
             this.hostName != null &&  this.portNumber != null && this.useSSL != null;
     }
     
@@ -88,18 +125,18 @@ public class DatabaseConfigurations {
             return false;
         }
         DatabaseConfigurations databaseProperties = (DatabaseConfigurations) o;
-        return Objects.equals(schemaName, databaseProperties.schemaName) && Objects.equals(userName, databaseProperties.userName) && Objects.equals(password, databaseProperties.password) && Objects.equals(hostName, databaseProperties.hostName) && Objects.equals(portNumber, databaseProperties.portNumber);
+        return Objects.equals(databaseName, databaseProperties.databaseName) && Objects.equals(userName, databaseProperties.userName) && Objects.equals(password, databaseProperties.password) && Objects.equals(hostName, databaseProperties.hostName) && Objects.equals(portNumber, databaseProperties.portNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schemaName, userName, password, hostName, portNumber);
+        return Objects.hash(databaseName, userName, password, hostName, portNumber);
     }
 
     @Override
     public String toString() {
         return "{" +
-            " schemaName='" + getSchemaName() + "'" +
+            " databaseName='" + getDatabaseName() + "'" +
             ", userName='" + getUserName() + "'" +
             ", password='" + getPassword() + "'" +
             ", hostName='" + getHostName() + "'" +
@@ -110,12 +147,12 @@ public class DatabaseConfigurations {
 
     // Getters and Setters
 
-    public String getSchemaName() {
-        return this.schemaName;
+    public String getDatabaseName() {
+        return this.databaseName;
     }
 
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
     }
 
     public String getUserName() {
@@ -157,8 +194,8 @@ public class DatabaseConfigurations {
         return type;
     }
 
-    public DatabaseConfigurations schemaName(String schemaName) {
-        this.schemaName = schemaName;
+    public DatabaseConfigurations databaseName(String databaseName) {
+        this.databaseName = databaseName;
         return this;
     }
 

@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
-import shared.database.model.SQLDatabase;
-
 
 /**
  * This class is the main Connection provider for our Systems.
@@ -20,7 +18,7 @@ public class DataSourceFactory {
     private static DatabaseType type = null;                                                          // The database type {psql, mysql}
         
     /**
-     * Loads tha database configurations         
+     * Loads tha database configurations
      */
     public static void loadDbConfigurations(DatabaseConfigurations config) {
         // Get the connection parameters.
@@ -40,6 +38,12 @@ public class DataSourceFactory {
         } 
     }    
 
+    /**
+     * Return a connection with the database specified by the configurations loaded.
+     * 
+     * @return
+     * @throws SQLException
+     */
     public static Connection getConnection() throws SQLException {
         return ds.getConnection();
     }

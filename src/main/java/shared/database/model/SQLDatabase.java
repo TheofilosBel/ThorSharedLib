@@ -5,11 +5,38 @@ import java.util.List;
 
 import shared.database.connectivity.DataSourceFactory;
 import shared.database.connectivity.DatabaseConfigurations;
+import shared.database.connectivity.DatabaseIndexManager;
 import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
 
 
 // This class models a SQL database.
 public abstract class SQLDatabase {
+
+    /**
+     * This interface is needed to be implemented by the subclass.
+     * SQL format does not change significantly, but inverted index queries 
+     * are always different when changing implementations.
+     * 
+     * This interface allows users to build their inverted index condition 
+     * without knowing the underlying database implementation.     
+     */
+    public static interface InvIdxCondBuilder {
+
+        public InvIdxCondBuilder setColumn(String col, String TableAlias);
+        public InvIdxCondBuilder setColumn(String col);
+        public InvIdxCondBuilder setSearchPhrase(String phrase);
+
+        /**
+         * Builds the condition based on the functions called. The user can setColumn and setSearchPhrase.
+         * 
+         * @note If no searchPhrase is set then we will set "?" in its place so you can use a prepared
+         * statement to set it.
+         * 
+         * @return The condition in string format/
+         */
+        public String build();
+
+    }
 
     protected DatabaseType type;                             // The type of the database {psql, mysql}.
     protected String name;                                   // The database name.
@@ -91,8 +118,10 @@ public abstract class SQLDatabase {
      * These methods are overwritten by sub classes and call different
      * objects to handle actions like: 
      * - Fill database.
+     * - Create a query.
      * - Find string in indexes. 
      */
+
 
     /**
      * Instantiate a database object using the the configuration file and the database name
@@ -101,9 +130,8 @@ public abstract class SQLDatabase {
      * @param databaseName
      * @return The database object or null in case of connection error.
      */
-    public static SQLDatabase InstantiateDatabase(String databaseName, String configurationFileName) {
-        DatabaseConfigurations dc = new DatabaseConfigurations(configurationFileName, databaseName);
-        DataSourceFactory.loadDbConfigurations(dc);
+    public static SQLDatabase InstantiateDatabase(String databaseName) {        
+        DatabaseConfigurations.useDatabase(databaseName);
         
         SQLDatabase database = null;
         if (DataSourceFactory.getType() == DatabaseType.mysql)
@@ -120,14 +148,48 @@ public abstract class SQLDatabase {
         return database;
     }
 
+
+    /**
+     * Search a column for a specific phrase
+     * 
+     * @param column
+     * @param phrase
+     * @return
+     */
+    public SQLIndexResult searchColumn(SQLColumn column, String phrase) {
+        return DatabaseIndexManager.searchKeyword(this, phrase, column);
+    }
+
+
+    /**     
+     * @return A {@link Query} to build a query.
+     */
+    public Query getQuery() {
+        return new Query(this);
+    }
     
 
     /**
-     * Fills the database object automatically by reading information from the Database Engine (Mysql/postgre).
-     *
+     * Fills the database object automatically by reading information
+     * from the Database Engine (Mysql/postgre).
      */
     public abstract void fillDatabase();
+    
 
+
+    /**
+     * Return a parametrized string for the grammar of querying a database index.
+     * The parametrized string should take 2 string parameters, the columns and the keyword.
+     */
+    public abstract InvIdxCondBuilder getInvIndexCondition();
+
+
+    /**
+     * Prepares the phrase, if it contains more than one words, for an
+     * "AND" full text search. This means that the results of the search must 
+     * contain all words in the phrase.     
+     */
+    public abstract String prepareForAndFullTextSearch(String phrase);
 
 
 
