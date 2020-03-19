@@ -1,16 +1,17 @@
 package shared.database.connectivity;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
 import shared.database.config.PropertiesSingleton;
+import shared.database.model.DatabaseType;
 
 /**
  * This class contains the Database configuration properties
  */
 public class DatabaseConfigurations {
-    public enum DatabaseType { psql, mysql};   // The database type.
-
+    
     private static final String mysqlDriver = "com.mysql.jdbc.Driver";
     private static final String psqlDriver = "org.postgresql.Driver";
     
@@ -30,29 +31,18 @@ public class DatabaseConfigurations {
 
 
     /**
-     * Fill the configuration using the configuration file name and the database name.
-     * 
-     * @param propertiesFileName
-     * @param databaseName
-     */
-    public static void fill(String propertiesFileName) {
-        if (instance == null)
-            instance = new DatabaseConfigurations(propertiesFileName);
-    }    
-
-    /**
      * This function updates the database name on the current configurations and reload 
      * the configurations used on {@link DataSourceFactory}.
      * 
      * @param databaseName
      */
-    public static void useDatabase(String databaseName) {
-        if (instance != null) {
-            instance.databaseName = databaseName;
+    public static void useDatabase(String databaseName, DatabaseType type) {
+        if (PropertiesSingleton.getBundle() != null) {
+            instance = new DatabaseConfigurations( PropertiesSingleton.getBundle(), databaseName, type);
             DataSourceFactory.loadDbConfigurations(instance);
         }
         else {
-            throw new RuntimeException("[ERR] Uninitialized Configurations. Please call DatabaseConfigurations.fill() to initialize them");
+            throw new RuntimeException("[ERR] Uninitialized Configurations. Please call PropertiesSingleton.loadProperties(<file_name>) to initialize them");
         }
     }
 
@@ -64,21 +54,19 @@ public class DatabaseConfigurations {
     }
 
 
-    private DatabaseConfigurations(String propertiesFileName) {
-        // Get the app properties file.
-        ResourceBundle resource = PropertiesSingleton.getBundle(propertiesFileName);
+    private DatabaseConfigurations(ResourceBundle resource, String databaseName, DatabaseType type) {
+        this.type = type;
 
         // Initialize the configs
         try {
-            this.databaseName(null)        
-              .userName(resource.getString("database.username"))
-              .password(resource.getString("database.password"))
-              .hostName(resource.getString("database.hostname"))
-              .portNumber(resource.getString("database.portnumber"))
-              .databaseType((resource.getString("database.type").equals("psql"))? DatabaseType.psql : DatabaseType.mysql );
+            this.databaseName(databaseName)        
+              .userName(resource.getString("database." + this.type.getType() + ".username"))
+              .password(resource.getString("database." + this.type.getType() + ".password"))
+              .hostName(resource.getString("database." + this.type.getType() + ".hostname"))
+              .portNumber(resource.getString("database." + this.type.getType() + ".portnumber"));
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("[ERR] Could not initialize Configurations with properties file: " + propertiesFileName);
+            System.err.println("[ERR] Could not initialize Configurations with properties file");
         }
     }
 
@@ -99,10 +87,10 @@ public class DatabaseConfigurations {
     /**
      * Returns the URL formated with the parameters hostName, portNumber, databaseName, useSSL
      */
-    public String getFormatedURL() {
-        if (this.type == DatabaseType.psql)
+    public String getFormattedURL() {
+        if (this.type.isPostgreSQL())
             return String.format(psqlURL, this.hostName, this.portNumber, this.databaseName);
-        else if (this.type == DatabaseType.mysql)
+        else if (this.type.isMySQL())
             return String.format(mysqlURL, this.hostName, this.portNumber, this.databaseName, String.valueOf(this.useSSL));
         else 
             throw new RuntimeException("Database type unspecified");
@@ -228,9 +216,9 @@ public class DatabaseConfigurations {
      * @return the driver
      */
     public String getDriver() {
-        if (this.type == DatabaseType.psql)
+        if (this.type.isPostgreSQL())
             return psqlDriver;
-        else if (this.type == DatabaseType.mysql)
+        else if (this.type.isMySQL())
             return mysqlDriver;
         else 
             throw new RuntimeException("Database type unspecified");

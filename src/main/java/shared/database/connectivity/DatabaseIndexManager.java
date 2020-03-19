@@ -29,7 +29,7 @@ public class DatabaseIndexManager {
      * @param attributes The attributes whose tuples we are going to search.
      * @return A List of {@link SQLIndexResult}.
      */
-    public static List<SQLIndexResult> searchKeyword(SQLDatabase database, String keyword, List<SQLColumn> attributes) {
+    public static List<SQLIndexResult> searchKeyword(SQLDatabase database, String keyword, List<SQLColumn> attributes, boolean useLike) {
         List<SQLIndexResult> indexResults = new ArrayList<>();  // The mapped elements.
 
         // Initialize the connection Variables
@@ -38,7 +38,7 @@ public class DatabaseIndexManager {
             for (SQLColumn attr: attributes) {
 
                 // Get the tuples where the element's value is contained.
-                List<SQLTuple> tuples = getInAttrOccurrences(database, keyword, attr, con);
+                List<SQLTuple> tuples = getInAttrOccurrences(database, keyword, attr, con, useLike);
                 if (tuples != null && !tuples.isEmpty())
                     indexResults.add(new SQLIndexResult(keyword, tuples));
             }
@@ -58,11 +58,11 @@ public class DatabaseIndexManager {
      * @param keyword     
      * @param columName
      */
-    public static SQLIndexResult searchKeyword(SQLDatabase database, String keyword, SQLColumn column) {
+    public static SQLIndexResult searchKeyword(SQLDatabase database, String keyword, SQLColumn column, boolean useLike) {
         SQLIndexResult results = null;
         try (Connection con = DataSourceFactory.getConnection()) {            
             // Get the tuples where the element's value is contained.
-            List<SQLTuple> tuples = getInAttrOccurrences(database, keyword, column, con);
+            List<SQLTuple> tuples = getInAttrOccurrences(database, keyword, column, con, useLike);
             if (tuples != null && !tuples.isEmpty())
                 results = (new SQLIndexResult(keyword, tuples));            
         }
@@ -77,7 +77,7 @@ public class DatabaseIndexManager {
     /** 
      * Returns the SQLTuples found in the parm attribute contain the parm keyword
      */
-    public static List<SQLTuple> getInAttrOccurrences(SQLDatabase database, String keyword, SQLColumn attribute, Connection con) 
+    public static List<SQLTuple> getInAttrOccurrences(SQLDatabase database, String keyword, SQLColumn attribute, Connection con, boolean useLike) 
       throws SQLException
     {                        
         // If the attribute is not Textual the return an empty list.
@@ -99,7 +99,7 @@ public class DatabaseIndexManager {
                 .where().addInvIndexCond(attribute).endWhere()
                 .toSQL();
         // Else use a LIKE '%..%' query to search the attribute if table.rows are not many
-        else if ( table.getRowsNum() < 100000)            
+        else if (useLike && table.getRowsNum() < 100000)            
             query = database.getQuery()
                 .select(attrsToSelect)
                 .from(table.getName())

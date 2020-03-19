@@ -12,10 +12,13 @@ public class PropertiesSingleton {
 
     private static ResourceBundle resource = null;
 
-    public static ResourceBundle getBundle(String resourcePath) {
+    public static void loadPropertiesFile(String resourcePath) {
         // Lazy load the Singleton Class
         if (resource == null)
             resource = ResourceBundle.getBundle(resourcePath);
+    }
+
+    public static ResourceBundle getBundle() {
         return resource;
     }
 

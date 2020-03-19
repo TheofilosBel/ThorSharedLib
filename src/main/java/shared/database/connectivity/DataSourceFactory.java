@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
-import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
+import shared.database.model.DatabaseType;
 
 /**
  * This class is the main Connection provider for our Systems.
@@ -15,7 +15,7 @@ import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
 public class DataSourceFactory {    
     private static final Logger LOGGER = Logger.getLogger(DataSourceFactory.class.getName());  // The LOGGER
     private static BasicDataSource ds = null;                                                  // The DataSource Object
-    private static DatabaseType type = null;                                                          // The database type {psql, mysql}
+    private static DatabaseType type = null;                                                   // The database type {psql, mysql}
         
     /**
      * Loads tha database configurations
@@ -24,7 +24,7 @@ public class DataSourceFactory {
         // Get the connection parameters.
         if (config.isAssigned()) {
             ds = new BasicDataSource();
-            ds.setUrl(config.getFormatedURL());
+            ds.setUrl(config.getFormattedURL());
             ds.setDriverClassName(config.getDriver());
             ds.setUsername(config.getUserName());
             ds.setPassword(config.getPassword());

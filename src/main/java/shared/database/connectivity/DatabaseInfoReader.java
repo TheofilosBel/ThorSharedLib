@@ -1,5 +1,7 @@
 package shared.database.connectivity;
 
+import shared.connectivity.thor.input.InputHandler;
+import shared.database.config.PropertiesSingleton;
 import shared.database.model.SQLDatabase;
 import shared.database.model.SQLIndexResult;
 import shared.database.model.SQLTupleList;
@@ -20,15 +22,19 @@ public interface DatabaseInfoReader {
 
 
     public static void main(String[] args) {
-        DatabaseConfigurations.fill("app");
-        SQLDatabase database = SQLDatabase.InstantiateDatabase("cordis");
+        // PropertiesSingleton.loadPropertiesFile("app");
+        // SQLDatabase database = SQLDatabase.InstantiateDatabase("IMDB", DatabaseType.mysql);
         
-        // Create indexes
-        System.out.println(database); 
+        // // Create indexes
+        // System.out.println(database);
+
+        InputHandler ih = new InputHandler();
+        ih.readInput();
+        System.out.println("DN: " + ih.getDatabaseName() + "\nDT: " + ih.getDatabaseType());
 
         // Search columns.
-        SQLIndexResult results = database.searchColumn(database.getTableByName("countries").getColumnByName("name"), "Spain");
-        SQLTupleList nl = new SQLTupleList(results.getTuples());
-        nl.print();
+        // SQLIndexResult results = database.searchColumn(database.getTableByName("countries").getColumnByName("name"), "Spain");
+        // SQLTupleList nl = new SQLTupleList(results.getTuples());
+        // nl.print();
     }
 }

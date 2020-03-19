@@ -102,6 +102,8 @@ public class SQLQueries {
     // and returns all tuples of a relation in which the keyword was found.
     public final static String INV_INDEX_QUERY = "SELECT %s FROM %s WHERE match(%s) against(? IN BOOLEAN MODE)";
 
+    public final static String MYSQL_CREATE_INV_INDEX = "CREATE FULLTEXT INDEX %s ON %s(%s)";
+
     // This query searches for a value in a specific column 
     // with the use of LIKE "%<value>%".
     public final static String LIKE_QUERY = "SELECT %s FROM %s WHERE %s LIKE ? LIMIT 2000";

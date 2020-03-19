@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import shared.database.model.DatabaseType;
+
 /**
  * This class handles the input for the systems connected to thor.
  * The input is read from the standard input, line by line.
@@ -14,9 +16,10 @@ import java.io.InputStreamReader;
  */
 public class InputHandler {
 
-    private String query;
-    private String schemaName;
-    private Integer resultsNum; // The maximum number of results to be returned by the system.
+    private String query;           // The free form query.
+    private String databaseName;    // The database name.
+    private DatabaseType databaseType;    // The Implementation of the database: Mysql or PostgreSQL
+    private Integer resultsNum;     // The maximum number of results to be returned by the system.
     private Boolean shutDownSystem; // Indicates whether the application ordered a shutdown.
 
     /**
@@ -24,7 +27,7 @@ public class InputHandler {
      */
     public InputHandler() {
         this.query = null;
-        this.schemaName = null;
+        this.databaseName = null;
         this.shutDownSystem = false;
     }
 
@@ -46,13 +49,24 @@ public class InputHandler {
                 this.shutDownSystem = true;
             }
             else {
-                this.schemaName = br.readLine();
+                String dbNameAndType = br.readLine();  // This is formated like <type>.<dbname> , for example mysql.IMDB
+
+                // If dbNameAndType does not contain a "." use MySQL as database type.
+                // Else split the dbNameAndType to ".""
+                if (!dbNameAndType.contains(".")) {                                        
+                    this.databaseType = DatabaseType.getTypeFromString("mysql");
+                    this.databaseName = dbNameAndType;
+                } else {
+                    this.databaseType = DatabaseType.getTypeFromString(dbNameAndType.split("\\.")[0]);
+                    this.databaseName = dbNameAndType.split("\\.")[1];
+                }
                 this.resultsNum = Integer.parseInt(br.readLine());
             }
         } catch (IOException e) {
             e.printStackTrace();
             this.query = "";
-            this.schemaName = "";
+            this.databaseName = "";
+            this.databaseType = null;
             this.shutDownSystem = true;
         }
 
@@ -68,10 +82,17 @@ public class InputHandler {
     }
 
     /**
+     * @return the databaseType
+     */
+    public DatabaseType getDatabaseType() {
+        return databaseType;
+    }
+
+    /**
      * @return The name of the schema the query will be executed against.
      */
-    public String getSchemaName() {
-        return schemaName;
+    public String getDatabaseName() {
+        return databaseName;
     }
 
     /**

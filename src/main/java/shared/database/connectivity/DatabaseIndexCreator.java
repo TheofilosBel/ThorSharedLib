@@ -1,13 +1,19 @@
 package shared.database.connectivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.SQLException;
 
+import shared.database.config.PropertiesSingleton;
+import shared.database.model.DatabaseType;
+import shared.database.model.MySqlDatabase;
 import shared.database.model.PostgreSQLDatabase;
 import shared.database.model.PostgreSQLQueries;
 import shared.database.model.SQLColumn;
+import shared.database.model.SQLDatabase;
 import shared.database.model.SQLQueries;
 
 /**
@@ -21,6 +27,31 @@ public class DatabaseIndexCreator {
 
 
     /**
+     * Check if the column matches any of the other columns names in the string list.
+     * Columns can have 2 formats:
+     *  - "tableName.ColumnName"
+     *  - "ColumnName"
+     * 
+     * @param col
+     * @param columnsToExclude
+     * @return
+     */
+    private static boolean columnMatchesStringList(SQLColumn col, List<String> columnsToExclude) {
+        //  Loop all columns
+        for (String colToEx: columnsToExclude) {
+            // If column to exclude contains table table name then check column with the table name.
+            // else simply check if the names are equal
+            if (colToEx.contains(".")) {
+                if (colToEx.equals( col.getTableName() + "." + col.getName())) return true;
+            } else { 
+                if (colToEx.equals(col.getName())) return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * Create full-text indexes for all textual attributes in a psql database excluding some columns.
      * How indexes are crated:
      * - Add a new column to the table, for each textual attribute.
@@ -30,7 +61,7 @@ public class DatabaseIndexCreator {
      * @param columnsToExclude
      * @param database
      */
-    public static void createIndex(List<String> columnsToExclude, PostgreSQLDatabase database) {
+    public static void createIndex(List<String> columnsToInclude, PostgreSQLDatabase database) {
 
         // Initialize connection variables
         Connection con = null;
@@ -38,14 +69,15 @@ public class DatabaseIndexCreator {
         try {
             // Get the connection
             con = DataSourceFactory.getConnection();
-            con.setAutoCommit(false);
+            // con.setAutoCommit(false);
 
             // Loop all column in the database
             for (SQLColumn col: database.getAllColumns()) {
-                // Skip non textual columns or columns to exclude
-                if (!col.getType().isTextual() || columnsToExclude.contains(col.getName())) continue;
+                // Skip not matches columns and non textual columns.
+                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual())  continue;
                 System.out.println("[INFO] Creating index for: " + col.toString());
-                
+
+
                 // Initialize names
                 String newColName = String.format(VEC_NAME, col.getName());
                 String idxName = String.format(IDX_NAME, col.getTableName(), col.getName());
@@ -71,23 +103,77 @@ public class DatabaseIndexCreator {
                 stmt.executeUpdate(createIndexSQL);
                 DatabaseUtil.close(stmt);
             }
-            con.commit();          
+            // con.commit();          
         } catch (SQLException e) {
             e.printStackTrace();
-            try {              
-                System.out.println("Rolling back...");
-                con.rollback();
-            } catch(SQLException excep) {
-                e.printStackTrace();
-            }        
+            // try {              
+            //     System.out.println("Rolling back...");
+            //     con.rollback();
+            // } catch(SQLException excep) {
+            //     e.printStackTrace();
+            // }
         } finally {
-            try {
-                con.setAutoCommit(true);
-            } catch (SQLException e) {                
-                e.printStackTrace();
-            }
+            // try {
+            //     con.setAutoCommit(true);
+            // } catch (SQLException e) {                
+            //     e.printStackTrace();
+            // }            
             DatabaseUtil.close(con, stmt);
         }
-    }    
+    }
+
+        /**
+     * Create full-text indexes for all textual attributes in a psql database excluding some columns.
+     * How indexes are crated:
+     * - Create a FULLTEXT index on every column requested by the paramter
+     * 
+     * @param columnsToExclude
+     * @param database
+     */
+    public static void createIndex(List<String> columnsToInclude, MySqlDatabase database) {
+
+        // Initialize connection variables
+        Connection con = null;
+        Statement stmt = null;        
+        try {
+            // Get the connection
+            con = DataSourceFactory.getConnection();
+
+            // Loop all column in the database
+            for (SQLColumn col: database.getAllColumns()) {
+                // Skip not matches columns and non textual columns.
+                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual())  continue;
+                System.out.println("[INFO] Creating index for: " + col.toString());
+
+
+                // Initialize names
+                String idxName = String.format(IDX_NAME, col.getTableName(), col.getName());
+
+                // Create Alter table & Update & Create Index queries
+                String alterTableSQL = String.format(SQLQueries.MYSQL_CREATE_INV_INDEX, idxName, col.getTableName(), col.getName());
+
+                // Issue the queries.
+                stmt = con.createStatement();
+                stmt.executeUpdate(alterTableSQL);
+            }
+            // con.commit();          
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DatabaseUtil.close(con, stmt);
+        }
+    }
+
+
+    public static void main(String[] args) {
+        PropertiesSingleton.loadPropertiesFile("app");
+        SQLDatabase database = SQLDatabase.InstantiateDatabase("cordis", DatabaseType.MySQL);
+        System.out.println(database);
+
+        
+        List<String> columnsToInclude = new ArrayList<>( Arrays.asList("topics.title", "projects.acronym", "projects.title", "subject_areas.title", "erc_panels.description", "programmes.title", "project_members.member_name",
+            "aproject_members.ctivity_type", "street", "city", "member_role", "member_short_name", "name", "eu_territorial_units.description" ) );
+        DatabaseIndexCreator.createIndex(columnsToInclude, (MySqlDatabase) database);
+    }
 
 }

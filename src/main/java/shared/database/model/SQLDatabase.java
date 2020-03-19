@@ -6,7 +6,6 @@ import java.util.List;
 import shared.database.connectivity.DataSourceFactory;
 import shared.database.connectivity.DatabaseConfigurations;
 import shared.database.connectivity.DatabaseIndexManager;
-import shared.database.connectivity.DatabaseConfigurations.DatabaseType;
 
 
 // This class models a SQL database.
@@ -130,13 +129,13 @@ public abstract class SQLDatabase {
      * @param databaseName
      * @return The database object or null in case of connection error.
      */
-    public static SQLDatabase InstantiateDatabase(String databaseName) {        
-        DatabaseConfigurations.useDatabase(databaseName);
+    public static SQLDatabase InstantiateDatabase(String databaseName, DatabaseType type) {        
+        DatabaseConfigurations.useDatabase(databaseName, type);
         
         SQLDatabase database = null;
-        if (DataSourceFactory.getType() == DatabaseType.mysql)
+        if (DataSourceFactory.getType().isMySQL())
             database = new MySqlDatabase(databaseName);
-        else if (DataSourceFactory.getType() == DatabaseType.psql)
+        else if (DataSourceFactory.getType().isPostgreSQL())
             database = new PostgreSQLDatabase(databaseName);
         else
             System.err.println("Database type not supported. Currently supporting: {Mysql, PostgreSQL}");
@@ -150,14 +149,16 @@ public abstract class SQLDatabase {
 
 
     /**
-     * Search a column for a specific phrase
+     * Search the column's values for the appearance of a phrase. Use the database index to achieve that. 
+     * Use like queries for textual attributes with less than 100 000 lines if boolean set to true.
      * 
-     * @param column
-     * @param phrase
+     * @param column The column's values to search.
+     * @param phrase The phrase to search.
+     * @param useLike Enable searches using the like '%keyword%' where indexes are not available. Disable it for faster lookups.
      * @return
      */
-    public SQLIndexResult searchColumn(SQLColumn column, String phrase) {
-        return DatabaseIndexManager.searchKeyword(this, phrase, column);
+    public SQLIndexResult searchColumn(SQLColumn column, String phrase, boolean useLike) {
+        return DatabaseIndexManager.searchKeyword(this, phrase, column, useLike);
     }
 
 
