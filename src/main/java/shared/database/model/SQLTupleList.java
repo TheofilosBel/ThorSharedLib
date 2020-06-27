@@ -33,6 +33,17 @@ public class SQLTupleList {
         return tuples;
     }
 
+    /**
+     * SubList the list of tuples from startIdx (inclusive) to stopIdx (exclusive)
+     * 
+     * @param startIdx
+     * @param stopIdx
+     */
+    public void subList(int startIdx, int stopIdx) {
+        if (this.tuples != null && this.tuples.size() >= stopIdx)
+            this.tuples = this.tuples.subList(startIdx, stopIdx);
+    }
+
     // Removes list of tuples.
     public void removeAllTuples(List<SQLTuple> tuples) {
         this.tuples.removeAll(tuples);

@@ -142,7 +142,7 @@ public class SQLColumn implements SchemaElement {
 
     @Override
     public String toString() {
-        return this.table.getName() + "." + this.name;
+        return (this.table != null ? this.getTableName() + "." : "") + this.name;
     }
 
 }

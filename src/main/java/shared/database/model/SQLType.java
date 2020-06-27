@@ -17,10 +17,10 @@ public class SQLType {
     private static String PSQL_DOUBLE_STR = "double precision";
     private static String PSQL_VARCHAR_STR = "character varying";
     
-
-    // 2 Mock SQL types.
-    public static SQLType TEXTUAL_TYPE = new SQLType("text varchar", 0);
-    public static SQLType NUMERIC_TYPE = new SQLType("int double", 0);
+    
+     // 2 Mock SQL types.
+    public static SQLType TEXTUAL_TYPE = new SQLType(String.format("%s %s %s %s", SQL_TEXT_STR, SQL_LONGTXT_STR, SQL_VARCHAR_STR, PSQL_VARCHAR_STR) , 0);
+    public static SQLType NUMERIC_TYPE = new SQLType("int double float numeric double precision", 0);
 
 
     private String type;
@@ -48,7 +48,7 @@ public class SQLType {
 
     // Returns true if type is text-like.
     public boolean isTextual() {
-        if (this.type.contains(SQL_VARCHAR_STR) || this.type.contains(SQL_TEXT_STR) || this.type.contains(PSQL_VARCHAR_STR)) {
+        if (this.type.contains(SQL_VARCHAR_STR) || this.type.contains(SQL_TEXT_STR) || this.type.contains(SQL_LONGTXT_STR) || this.type.contains(PSQL_VARCHAR_STR)) {
             return true;
         }
 

@@ -3,8 +3,13 @@ package shared.database.model;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The database type, represents the underlying implementation of the database we want to read.
+/** <pre>
+ * The database type, represents the underlying implementation of the database we want to connect.
+ * Currently supporting: 
+ * 1. MySQL (string equivalent used to define the type "mysql")
+ * 2. PostgreSQL (string equivalent used to define the type "psql")
+ * 
+ * </pre>
  */
 public enum DatabaseType {
     

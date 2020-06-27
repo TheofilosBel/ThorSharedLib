@@ -1,10 +1,8 @@
-package shared.database.connectivity;
+package shared.database.config;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import shared.database.config.PropertiesSingleton;
 import shared.database.model.DatabaseType;
 
 /**
@@ -12,15 +10,12 @@ import shared.database.model.DatabaseType;
  */
 public class DatabaseConfigurations {
     
-    private static final String mysqlDriver = "com.mysql.jdbc.Driver";
+    private static final String mysqlDriver = "com.mysql.cj.jdbc.Driver";
     private static final String psqlDriver = "org.postgresql.Driver";
     
-    private static final String mysqlURL = "jdbc:mysql://%s:%s/%s?useSSL=%s";
+    private static final String mysqlURL = "jdbc:mysql://%s:%s/%s?useSSL=%s&serverTimezone=UTC";
     private static final String psqlURL = "jdbc:postgresql://%s:%s/%s";
-
-    // The Singleton Pattern
-    private static DatabaseConfigurations instance;
-
+    
     private String databaseName = null;         // The database Name
     private String userName = null;             // The user Name
     private String password = null;             // The password
@@ -29,32 +24,15 @@ public class DatabaseConfigurations {
     private Boolean useSSL = false;             // The useSSL boolean
     private DatabaseType type = null;           // The database type {psql, mysql}
 
-
+ 
     /**
-     * This function updates the database name on the current configurations and reload 
-     * the configurations used on {@link DataSourceFactory}.
+     * Initialize a {@link DatabaseConfigurations} object using a {@link ResourceBundle} (with resources written in specific syntax), the database name and the database type.
      * 
-     * @param databaseName
+     * @param resource A bundle with resources written like : 'database.{DatabaseType}.username', 'database.{DatabaseType}.password', 'database.{DatabaseType}.hostname', 'database.{DatabaseType}.portnumber' 
+     * @param databaseName The database name
+     * @param type The type of the database (see {@link DatabaseType})
      */
-    public static void useDatabase(String databaseName, DatabaseType type) {
-        if (PropertiesSingleton.getBundle() != null) {
-            instance = new DatabaseConfigurations( PropertiesSingleton.getBundle(), databaseName, type);
-            DataSourceFactory.loadDbConfigurations(instance);
-        }
-        else {
-            throw new RuntimeException("[ERR] Uninitialized Configurations. Please call PropertiesSingleton.loadProperties(<file_name>) to initialize them");
-        }
-    }
-
-    /**
-     * @return the Singleton Database Instance
-     */
-    public static DatabaseConfigurations getInstance() {
-        return instance;        
-    }
-
-
-    private DatabaseConfigurations(ResourceBundle resource, String databaseName, DatabaseType type) {
+    public DatabaseConfigurations(ResourceBundle resource, String databaseName, DatabaseType type) {
         this.type = type;
 
         // Initialize the configs
@@ -70,12 +48,31 @@ public class DatabaseConfigurations {
         }
     }
 
+    /**
+     * Initialize the configurations using the databaseName, the username and the password.
+     * 
+     * The default host will be 'localhost' and the port '3306' and the database Type MySQL
+     * 
+     * @param databaseName
+     * @param userName
+     * @param password
+     */
     public DatabaseConfigurations(String databaseName, String userName, String password) {
         this.databaseName = databaseName;
         this.userName = userName;
         this.password = password;
     }
 
+
+    /**
+     * Initialize the configurations using the databaseName, the username and the password, host and port.
+     * 
+     * @param databaseName
+     * @param userName
+     * @param password
+     * @param host
+     * @param port
+     */
     public DatabaseConfigurations(String databaseName, String userName, String password, String host, String port) {
         this.databaseName = databaseName;
         this.userName = userName;
@@ -83,9 +80,12 @@ public class DatabaseConfigurations {
         this.hostName = host;
         this.portNumber = port;
     }
+    
 
     /**
      * Returns the URL formated with the parameters hostName, portNumber, databaseName, useSSL
+     * 
+     * @throws RuntimeException If the underlying {@link DatabaseType} is not supported (see {@link DatabaseType})
      */
     public String getFormattedURL() {
         if (this.type.isPostgreSQL())

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shared.database.connectivity.DataSourceFactory;
-import shared.database.connectivity.DatabaseConfigurations;
 import shared.database.connectivity.DatabaseIndexManager;
 
 
@@ -130,7 +129,7 @@ public abstract class SQLDatabase {
      * @return The database object or null in case of connection error.
      */
     public static SQLDatabase InstantiateDatabase(String databaseName, DatabaseType type) {        
-        DatabaseConfigurations.useDatabase(databaseName, type);
+        DataSourceFactory.loadConnectionProperties(databaseName, type);
         
         SQLDatabase database = null;
         if (DataSourceFactory.getType().isMySQL())

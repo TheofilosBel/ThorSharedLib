@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+import shared.database.config.DatabaseConfigurations;
+import shared.database.config.PropertiesSingleton;
 import shared.database.model.DatabaseType;
 
 /**
@@ -16,11 +18,44 @@ public class DataSourceFactory {
     private static final Logger LOGGER = Logger.getLogger(DataSourceFactory.class.getName());  // The LOGGER
     private static BasicDataSource ds = null;                                                  // The DataSource Object
     private static DatabaseType type = null;                                                   // The database type {psql, mysql}
-        
+
+    
     /**
-     * Loads tha database configurations
+     * Loads the connection properties and instantiates a {@link BasicDataSource} object. 
+     * After calling this method, using 'getConnection' will yield a {@link Connection} object.
+     * 
+     * @NOTE: The database connection configurations are not necessary because this method will use the ones
+     * stored in the {@link PropertiesSingleton} class.
+     * 
+     * @param databaseName The name of the database
+     * @param DatabaseType The type of the underlying database (see {@link DatabaseType})
      */
-    public static void loadDbConfigurations(DatabaseConfigurations config) {
+    public static void loadConnectionProperties(String databaseName, DatabaseType type) {
+        if (PropertiesSingleton.getBundle() != null) {
+            DatabaseConfigurations configs = new DatabaseConfigurations( PropertiesSingleton.getBundle(), databaseName, type);
+            DataSourceFactory.instantiateDataSource(configs);
+        }
+        else {
+            throw new RuntimeException("[ERR] Uninitialized Configurations. Please call PropertiesSingleton.loadProperties(<file_name>) to initialize them");
+        }
+    }
+
+    /**
+     * Loads the connection properties and instantiates a {@link BasicDataSource} object. 
+     * After calling this method, using 'getConnection' will yield a {@link Connection} object.
+     * 
+     * @param configs An instantiated {@link DatabaseConfigurations} object containing all info about the database.
+     *      
+     */
+    public static void loadConnectionProperties(DatabaseConfigurations configs) {                    
+        DataSourceFactory.instantiateDataSource(configs);        
+    }
+
+
+     /**
+     * Creates a {@link BasicDataSource} instance using the an instance of the class {@link DatabaseConfigurations}
+     */
+    private static void instantiateDataSource(DatabaseConfigurations config) {
         // Get the connection parameters.
         if (config.isAssigned()) {
             ds = new BasicDataSource();
@@ -36,7 +71,9 @@ public class DataSourceFactory {
         else {        
             LOGGER.info("[ERR] Configuration Object not assigned");
         } 
-    }    
+    }
+
+    // ----------------------
 
     /**
      * Return a connection with the database specified by the configurations loaded.

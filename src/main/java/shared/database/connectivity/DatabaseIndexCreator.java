@@ -73,8 +73,8 @@ public class DatabaseIndexCreator {
 
             // Loop all column in the database
             for (SQLColumn col: database.getAllColumns()) {
-                // Skip not matches columns and non textual columns.
-                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual())  continue;
+                // Skip not matches columns and non textual columns and indexed columns
+                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual() || col.isIndexed())  continue;
                 System.out.println("[INFO] Creating index for: " + col.toString());
 
 
@@ -142,7 +142,7 @@ public class DatabaseIndexCreator {
             // Loop all column in the database
             for (SQLColumn col: database.getAllColumns()) {
                 // Skip not matches columns and non textual columns.
-                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual())  continue;
+                if ( !columnMatchesStringList(col, columnsToInclude)  || !col.getType().isTextual() || col.isIndexed())  continue;
                 System.out.println("[INFO] Creating index for: " + col.toString());
 
 
@@ -153,10 +153,13 @@ public class DatabaseIndexCreator {
                 String alterTableSQL = String.format(SQLQueries.MYSQL_CREATE_INV_INDEX, idxName, col.getTableName(), col.getName());
 
                 // Issue the queries.
-                stmt = con.createStatement();
-                stmt.executeUpdate(alterTableSQL);
+                try {
+                    stmt = con.createStatement();
+                    stmt.executeUpdate(alterTableSQL);    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            // con.commit();          
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -171,9 +174,9 @@ public class DatabaseIndexCreator {
         System.out.println(database);
 
         
-        List<String> columnsToInclude = new ArrayList<>( Arrays.asList("topics.title", "projects.acronym", "projects.title", "subject_areas.title", "erc_panels.description", "programmes.title", "project_members.member_name",
-            "aproject_members.ctivity_type", "street", "city", "member_role", "member_short_name", "name", "eu_territorial_units.description" ) );
-        DatabaseIndexCreator.createIndex(columnsToInclude, (MySqlDatabase) database);
+        // List<String> columnsToInclude = new ArrayList<>( Arrays.asList("topics.title", "projects.acronym", "projects.title", "subject_areas.title", "erc_panels.description", "programmes.title", "project_members.member_name",
+        //     "aproject_members.ctivity_type", "street", "city", "member_role", "member_short_name", "name", "eu_territorial_units.description" ) );
+        // DatabaseIndexCreator.createIndex(columnsToInclude, (MySqlDatabase) database);
     }
 
 }

@@ -18,8 +18,9 @@ public class InputHandler {
 
     private String query;           // The free form query.
     private String databaseName;    // The database name.
-    private DatabaseType databaseType;    // The Implementation of the database: Mysql or PostgreSQL
-    private Integer resultsNum;     // The maximum number of results to be returned by the system.
+    private DatabaseType databaseType;           // The Implementation of the database: Mysql or PostgreSQL
+    private Integer resultsPerInterpretationNum; // The maximum number of results per interpretationto be returned by the system.
+    private Integer interpretationsNum;          // The maximum number of interpretations to be returned by the system.
     private Boolean shutDownSystem; // Indicates whether the application ordered a shutdown.
 
     /**
@@ -28,7 +29,7 @@ public class InputHandler {
     public InputHandler() {
         this.query = null;
         this.databaseName = null;
-        this.shutDownSystem = false;
+        this.shutDownSystem = false;        
     }
 
     /**
@@ -49,7 +50,7 @@ public class InputHandler {
                 this.shutDownSystem = true;
             }
             else {
-                String dbNameAndType = br.readLine();  // This is formated like <type>.<dbname> , for example mysql.IMDB
+                String dbNameAndType = br.readLine();  // This is formated like <type>.<dbname>, for example mysql.IMDB or psql.CORDIS
 
                 // If dbNameAndType does not contain a "." use MySQL as database type.
                 // Else split the dbNameAndType to ".""
@@ -60,7 +61,8 @@ public class InputHandler {
                     this.databaseType = DatabaseType.getTypeFromString(dbNameAndType.split("\\.")[0]);
                     this.databaseName = dbNameAndType.split("\\.")[1];
                 }
-                this.resultsNum = Integer.parseInt(br.readLine());
+                this.interpretationsNum = Integer.parseInt(br.readLine());
+                this.resultsPerInterpretationNum = Integer.parseInt(br.readLine());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,6 +70,8 @@ public class InputHandler {
             this.databaseName = "";
             this.databaseType = null;
             this.shutDownSystem = true;
+            this.interpretationsNum = 0;
+            this.resultsPerInterpretationNum = 0;
         }
 
         // Print a line to indicate that the input to the program ends here.
@@ -97,16 +101,27 @@ public class InputHandler {
 
     /**
      * @return True if the application ordered the system to shutdown.
+     * 
+     * @NOTE Generally the application uses SIGTERM for abnormal termination, so implementing a signal handler should be a good idea.
      */
     public Boolean shutDownSystem() {
         return shutDownSystem;
     }
 
+
     /**
-     * @return The maximum number of results to be returned by the system.
+     * @return The maximum number of interpretation (SQL query) to be returned by the system.
      */
-    public Integer getResultsNumber() {
-        return resultsNum;
+    public Integer getInterpretations() {
+        return interpretationsNum;
+    }
+
+
+    /**
+     * @return The maximum number of results to be returned by an interpretation (SQL query) of the system.
+     */
+    public Integer getResultsPerInterpretation() {
+        return resultsPerInterpretationNum;
     }
 
 }

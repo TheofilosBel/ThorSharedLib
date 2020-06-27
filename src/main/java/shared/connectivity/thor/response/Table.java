@@ -2,6 +2,7 @@ package shared.connectivity.thor.response;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,6 +22,10 @@ public class Table {
          */
         public Row(List<String> values) {
             this.columnValues = values;
+        }
+
+        public Row(Collection<String> values) {
+            this.columnValues = new ArrayList<>(values);
         }
 
         public Row(String... values) {
@@ -69,22 +74,53 @@ public class Table {
      * Use this constructor to create a table with rows of any size.
      * Make sure that the length of the columnTitles argument is equal to the length of each row.
      * The table title will be left empty.
+     * 
+     * @throws IllegalArgumentException When columnTitles and Rows contents are not the same size
      */    
     public Table(List<String> columnTitles, List<Row> rows) {
         this.title = null;
         this.columnTitles = columnTitles;
         this.rows = rows;
+
+        if (this.rows != null && this.columnTitles.size() != this.rows.get(0).columnValues.size())
+            throw new IllegalArgumentException("ColumnTitles and Row's contents are not of the same size");
     }
 
     /** 
      * Use this constructor to create a table with rows of any size.
      * Make sure that the length of the columnTitles argument is equal to the length of each row.
      * The table title will be set to the value of the first argument.
+     * 
+     * @throws IllegalArgumentException When columnTitles and Rows contents are not the same size
      */    
     public Table(String title, List<String> columnTitles, List<Row> rows) {
         this.title = title;
         this.columnTitles = columnTitles;
         this.rows = rows;
+
+        if (this.rows != null && this.columnTitles.size() != this.rows.get(0).columnValues.size())
+            throw new IllegalArgumentException("ColumnTitles and Row's contents are not of the same size");
+    }
+
+
+     /** 
+     * Generic constructor
+     * 
+     * Use this constructor to create a table with rows of any size.
+     * Make sure that the length of the columnTitles argument is equal to the length of each row.
+     * The table title will be left empty.
+     * 
+     * @throws IllegalArgumentException When columnTitles and Rows contents are not the same size
+     */    
+    public Table(Collection<String> columnTitles, Collection<Collection<String>> rows) {
+        this.title = null;
+        this.columnTitles = new ArrayList<>(columnTitles);        
+        this.rows = new ArrayList<Row>();
+        for (Collection<String> r: rows)
+            this.rows.add( new Row(r) );
+
+        if (this.rows != null && this.columnTitles.size() != this.rows.get(0).columnValues.size())
+            throw new IllegalArgumentException("ColumnTitles and Row's contents are not of the same size");
     }
 
     /**
