@@ -1,5 +1,6 @@
 package shared.connectivity.thor.response;
 
+import shared.util.Table;
 import java.util.List;
 
 /** 
