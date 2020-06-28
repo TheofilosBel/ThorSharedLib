@@ -118,7 +118,7 @@ public class Table {
         while (rs.next()) {
             Row row = new Row();
             for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++)
-                row.add( rs.getObject(columnIndex).toString() );            
+                row.add( (rs.getObject(columnIndex) != null) ? rs.getObject(columnIndex).toString() : "null" );            
             rows.add(row);
         }
     }
