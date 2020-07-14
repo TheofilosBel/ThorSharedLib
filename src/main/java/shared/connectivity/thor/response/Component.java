@@ -4,8 +4,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import shared.util.Table;
 import shared.util.Timer;
 import shared.util.Timer.Type;
+
 
 /**
  * This class represents a component and stores information (related to the component)
