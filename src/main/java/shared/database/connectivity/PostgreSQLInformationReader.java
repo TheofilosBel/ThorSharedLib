@@ -96,7 +96,11 @@ public class PostgreSQLInformationReader implements DatabaseInfoReader {
                 String tableName = rs.getString("TABLE_NAME");
                 String columnName = rs.getString("COLUMN_NAME");
 
-                SQLTable table = tablesMap.get(tableName);                
+                SQLTable table = tablesMap.get(tableName);
+                if (table == null) {
+                    System.out.println("[INF] Table: " + tableName + " was not found in our db object... skipping pk extraction");
+                    continue;
+                }
                 table.getPrimaryKey().add(table.getColumnByName(columnName));       // Add pk to table 
                 table.getColumnByName(columnName).addKey(SQLColumn.PK_IDENTIFIER);  // Add pk identifier to column
 
